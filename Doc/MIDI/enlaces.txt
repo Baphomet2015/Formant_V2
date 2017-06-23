@@ -1,0 +1,13 @@
+https://geekytheory.com/arduinomidi-tu-propio-piano
+https://github.com/FortySevenEffects/arduino_midi_library/releases/tag/4.2
+http://www.prometec.net/midi-introduccion/
+https://www.hwlibre.com/fabrica-propio-controlador-midi-arduino/
+http://www.makeuseof.com/tag/make-midi-controller-arduino/
+
+
+EJEMPLO BUENO:
+https://www.hispasonic.com/tutoriales/bricolaje-midi-arduino/38463
+
+
+
+
