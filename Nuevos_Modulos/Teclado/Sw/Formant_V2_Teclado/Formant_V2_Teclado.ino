@@ -32,8 +32,8 @@
 // ------------------------------------------------------------
 
 
-ARDUINO_MIDI c_MIDI;
-
+ARDUINO_MIDI c_MIDI;         // Variable para manejar los datos MIDI
+byte         canalID;        // Canal MIDI asignado al Formant V2
 
 
 
@@ -50,10 +50,19 @@ void setup()
    pinMode(IDE_HW_PIN_DATA ,OUTPUT);
    pinMode(IDE_HW_PIN_LATCH,OUTPUT);
    
+   pinMode(IDE_HW_PIN_LED_TECLA_ON,OUTPUT);
+   
    pinMode(IDE_HW_PIN_GATE,OUTPUT);
+   
+   pinMode(IE_HW_CANAL_00,INPUT);
+   pinMode(IE_HW_CANAL_01,INPUT); 
+   pinMode(IE_HW_CANAL_02,INPUT);
+   pinMode(IE_HW_CANAL_03,INPUT);
    
    set_CodigoTecla(0);
    set_GATE(LOW);
+   set_LedTeclaOn(LOW);
+   get_CanalID();
 }
 
 
@@ -67,22 +76,37 @@ void setup()
 void loop()
 {
   int resultado;
+  int flgNoteOn;
   
   
+  flgNoteOn = false;
   resultado = c_MIDI.get_msg_MIDI();
 
   if ( resultado==MIDI_RET_OK ) 
      { // ------------------------------------------------------------
        //
        // ------------------------------------------------------------
-       if ( c_MIDI.get_Channel()==IDE_CANAL_ASIGNADO )
+       
+       #ifdef APP_MODO_DEBUG
+       Serial.print  ("TIPO:" );
+       Serial.println(c_MIDI.get_Type()   ,DEC);
+       Serial.print  ("CANAL:" );
+       Serial.println(c_MIDI.get_Channel(),DEC);
+       Serial.print  ("DATA0:" );
+       Serial.println(c_MIDI.get_Data_01(),DEC);
+       Serial.print  ("DATA1:" );
+       Serial.println(c_MIDI.get_Data_02(),DEC);
+       #endif
+    
+       if ( c_MIDI.get_Channel()==canalID )
           { // -------------------------------------------------------
-            //
+            // Es un mensaje para este receptor
             // -------------------------------------------------------
             switch( c_MIDI.get_Type() )
                   { // -----------------------------------------------
                     //
                     // -----------------------------------------------
+                                          
                     case ( MIDI_MSG_C_NOTE_ON ):
                          { // -----------------------------------------------
                            //             PULSAR la tecla
@@ -102,8 +126,13 @@ void loop()
                            // el 50 debido a esto se debe sumar 1 al codigo de
                            // tecla recibido en un mensaje MIDI
                            // -----------------------------------------------
-                           set_CodigoTecla(c_MIDI.get_Data_01()+1);
-                           set_GATE(HIGH);
+                           if ( flgNoteOn==false )
+                              {
+                                flgNoteOn = true;
+                                set_CodigoTecla(c_MIDI.get_Data_01()+1);
+                                set_GATE(HIGH);
+                                set_LedTeclaOn(HIGH);
+                              }
                            break; 
                          }
 
@@ -111,12 +140,25 @@ void loop()
                          { // -----------------------------------------------
                            //            DEJAR de pulsar tecla
                            // -----------------------------------------------
+                           flgNoteOn = false;
                            set_CodigoTecla(0);
                            set_GATE(LOW);
+                           set_LedTeclaOn(LOW);
                            break; 
                          }
+                         
+                    case ( MIDI_MSG_S_RESET ):
+                         { // -----------------------------------------------
+                           //            RESET DE SISTEMA
+                           // -----------------------------------------------
+                           set_CodigoTecla(0);
+                           set_GATE(LOW);
+                           set_LedTeclaOn(LOW);
+                           break; 
+                         }    
                   }
           }
+    
      }
 
 }
@@ -156,4 +198,35 @@ void set_GATE(byte modo)
 }
 
 
+
+
+// ------------------------------------------------------------
+//
+// void set_LedTeclaOn(byte modo)
+// Activa/Desactiva el led de tecla pulsada
+//
+//. modo --> LOW
+//. modo --> HIGH
+//
+// ------------------------------------------------------------
+
+void set_LedTeclaOn(byte modo)
+{
+  digitalWrite(IDE_HW_PIN_LED_TECLA_ON,modo);  
+}
+
+
+
+// ------------------------------------------------------------
+//
+// void get_CanalID(void)
+//
+// ------------------------------------------------------------
+
+void get_CanalID(void)
+{
+  
+  canalID = 1;  
+  
+}
 

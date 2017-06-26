@@ -26,22 +26,21 @@
 //
 // ---------------------------------------------------------
 
-#define APP_MODO_DEBUG      1   // MODO DEBUG: Descomentar este define
-                                // MODO REAL:  Comentar este define
+#define APP_MODO_DEBUG            1   // MODO DEBUG: Descomentar este define
+                                      // MODO REAL:  Comentar este define
 
-#define IDE_HW_PIN_CLOCK    0   // Pin para generar el codigo de control ( CLOCK )
-#define IDE_HW_PIN_DATA     1   // Pin para generar el codigo de control ( DATA  )
-#define IDE_HW_PIN_LATCH    2   // Pin para generar el codigo de control ( LATCH )
+#define IDE_HW_PIN_CLOCK          0   // Pin para generar el codigo de control ( CLOCK )
+#define IDE_HW_PIN_DATA           1   // Pin para generar el codigo de control ( DATA  )
+#define IDE_HW_PIN_LATCH          2   // Pin para generar el codigo de control ( LATCH )
 
-#define IDE_HW_PIN_GATE     6   // Pin para generar la señal GATE
+#define IDE_HW_PIN_GATE           6   // Pin para generar la señal GATE
 
-#define IDE_CANAL_ASIGNADO  1   // Canal por el que se comunica el MIDI
+#define IDE_HW_PIN_LED_TECLA_ON   7   // Pin para indicar "tecla pulsada"
 
-
-
-
-
-
+#define IE_HW_CANAL_00            0
+#define IE_HW_CANAL_01            0
+#define IE_HW_CANAL_02            0
+#define IE_HW_CANAL_03            0
 
 
 

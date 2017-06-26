@@ -26,13 +26,26 @@
 
 ARDUINO_MIDI::ARDUINO_MIDI()
 {
+  ini();
+}
+
+
+
+// ------------------------------------------------------------
+//
+// void ARDUINO_MIDI::ini(void)
+//
+//
+// ------------------------------------------------------------
+
+void ARDUINO_MIDI::ini(void)
+{
   msg_MIDI.type    = 0;
   msg_MIDI.channel = 0;
   msg_MIDI.data_01 = 0;
   msg_MIDI.data_02 = 0;  
   
   Serial.begin(MIDI_VEL_TRX);
-  
 }
 
 
@@ -59,7 +72,7 @@ int ARDUINO_MIDI::get_msg_MIDI(void)
   resultado = MIDI_RET_NO;
   nCar      = 0;
   
-  while ( Serial.available()>0 && (nCar<=3) )
+  while ( Serial.available()>0 && (nCar<3) )
         { // ------------------------------------------------------------
           //
           // ------------------------------------------------------------
@@ -87,20 +100,25 @@ int ARDUINO_MIDI::get_msg_MIDI(void)
              
   if ( nCar==3 )
      { // ------------------------------------------------------------
-       //
+       // Se han recibido 3 caracteres, puede ser un mensaje MIDI
        // ------------------------------------------------------------
-       if ( (b0>= B10000000) && (b0<= B11101111) )
-          {
-             msg_MIDI.channel = (b0 & B00001111) + 1;
-             msg_MIDI.type    = (b0 & B11110000);
-             msg_MIDI.data_01 = b1;
-             msg_MIDI.data_02 = b2;
-             resultado = MIDI_RET_OK;
+       if ( b0>=B10000000 )
+          { // ------------------------------------------------------------
+            // El bit mas significativo es 1, luego es el byte de ESTADO
+            // ------------------------------------------------------------
+            msg_MIDI.channel = (b0 & B00001111) + 1;
+            msg_MIDI.type    = (b0 & B11110000);
+            msg_MIDI.data_01 = b1;
+            msg_MIDI.data_02 = b2;
+            resultado = MIDI_RET_OK;
           }     
        else  
-          {
-             resultado = MIDI_RET_ER;
+          { // ------------------------------------------------------------
+            // El bit mas significativo es 0, mensaje INCORRECTO
+            // ------------------------------------------------------------
+            resultado = MIDI_RET_ER;
           }
+       
        delayMicroseconds(IDE_PAUSA_CAR_RX); 
      }  
 

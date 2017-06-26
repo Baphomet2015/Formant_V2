@@ -93,6 +93,7 @@ class ARDUINO_MIDI
    
    ARDUINO_MIDI();
    
+   void ini          (void);
    int  get_msg_MIDI (void);
    byte get_Channel  (void)      { return(msg_MIDI.channel); }
    byte get_Type     (void)      { return(msg_MIDI.type);    }
