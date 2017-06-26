@@ -46,15 +46,13 @@ ARDUINO_MIDI c_MIDI;
 
 void setup()
 {
-   pinMode(IDE_HW_PIN_D0,OUTPUT);
-   pinMode(IDE_HW_PIN_D1,OUTPUT);
-   pinMode(IDE_HW_PIN_D2,OUTPUT);
-   pinMode(IDE_HW_PIN_D3,OUTPUT);
-   pinMode(IDE_HW_PIN_D4,OUTPUT);
-   pinMode(IDE_HW_PIN_D5,OUTPUT);
+   pinMode(IDE_HW_PIN_CLOCK,OUTPUT);
+   pinMode(IDE_HW_PIN_DATA ,OUTPUT);
+   pinMode(IDE_HW_PIN_LATCH,OUTPUT);
    
    pinMode(IDE_HW_PIN_GATE,OUTPUT);
    
+   set_CodigoTecla(0);
    set_GATE(LOW);
 }
 
@@ -81,18 +79,66 @@ void loop()
           { // -------------------------------------------------------
             //
             // -------------------------------------------------------
-            
-            
-            
+            switch( c_MIDI.get_Type() )
+                  { // -----------------------------------------------
+                    //
+                    // -----------------------------------------------
+                    case ( MIDI_MSG_C_NOTE_ON ):
+                         { // -----------------------------------------------
+                           //             PULSAR la tecla
+                           //
+                           // Los codigos MIDI que identifican las teclas van
+                           // del 0 ... 127 0   --> Do mas grave
+                           //               127 --> Teclas mas aguda 
+                           //
+                           // En el circuito de  interfaz el Formant V2 , las 
+                           // teclas se  numeran del 1 ...50  porque  son las 
+                           // teclas que existen (4 OCTAVAS).
+                           //
+                           // IMPORTANTE:
+                           // El  codigo  0  se  utiliza  en  el interfaz  del
+                           // Formant V2 para dejar de pulsar  cualquier tecla
+                           // , por lo que las teclas empiezan en el 1 y hasta
+                           // el 50 debido a esto se debe sumar 1 al codigo de
+                           // tecla recibido en un mensaje MIDI
+                           // -----------------------------------------------
+                           set_CodigoTecla(c_MIDI.get_Data_01()+1);
+                           set_GATE(HIGH);
+                           break; 
+                         }
+
+                    case ( MIDI_MSG_C_NOTE_OFF ):
+                         { // -----------------------------------------------
+                           //            DEJAR de pulsar tecla
+                           // -----------------------------------------------
+                           set_CodigoTecla(0);
+                           set_GATE(LOW);
+                           break; 
+                         }
+                  }
           }
      }
-
-
-
 
 }
 
 
+// ------------------------------------------------------------
+//
+// void set_CodigoTecla(byte tecla)
+//
+//
+// ------------------------------------------------------------
+
+void set_CodigoTecla(byte tecla)
+{
+ 
+  digitalWrite(IDE_HW_PIN_LATCH,LOW);
+  shiftOut(IDE_HW_PIN_DATA, IDE_HW_PIN_CLOCK, LSBFIRST, tecla);
+  digitalWrite(IDE_HW_PIN_LATCH,HIGH);
+     
+}
+  
+  
 
 // ------------------------------------------------------------
 //
@@ -110,69 +156,4 @@ void set_GATE(byte modo)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ------------------------------------------------------------
-//
-// void readMIDI(byte* channel ,byte* type, byte* data1, byte* data2)
-//
-// ------------------------------------------------------------
-    byte type;
-byte channel;
-byte data1;
-byte data2;
-
- void readMIDI(byte* channel ,byte* type, byte* data1, byte* data2)
-   {
-
-     
-
-
-    int aux;
-
-    while (Serial.available()>0){
-
-    aux=Serial.read();
-
-    if ((aux >= B10000000)&&(aux <= B11101111)){
-
-    // Si es byte STATUS legal:
-
-    *channel=(aux&B00001111)+1; //canales entre 1 y 16
-
-    *type=(aux&B11110000);
-
-    // Esperamos porque si aún no han llegado los datos,
-
-    // los Serial.read() devolverán -1:
-
-    while (Serial.available() < 2){
-
-    }
-
-    *data1 = Serial.read();
-
-    *data2 = Serial.read();
-
-    break; // Sale porque ha leído un mensaje MIDI correcto
-
-    }
-
-    }
-
-    }
 

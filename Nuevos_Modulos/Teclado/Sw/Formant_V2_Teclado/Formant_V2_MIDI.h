@@ -30,13 +30,13 @@
 // TIPOS de mensajes de CANAL
 // ---------------------------------------------------------
 
-#define MIDI_MSG_C_NOTE_OFF         0x8  
-#define MIDI_MSG_C_NOTE_ON          0x9  
-#define MIDI_MSG_C_POLY_AFTER       0xA
-#define MIDI_MSG_C_CTRL_CHG         0xB
-#define MIDI_MSG_C_PROG_CHG         0xC
-#define MIDI_MSG_C_CHANNEL_AFTER    0xD
-#define MIDI_MSG_C_PITCH_WHEEL      0xE
+#define MIDI_MSG_C_NOTE_OFF         0x80  
+#define MIDI_MSG_C_NOTE_ON          0x90  
+#define MIDI_MSG_C_POLY_AFTER       0xA0
+#define MIDI_MSG_C_CTRL_CHG         0xB0
+#define MIDI_MSG_C_PROG_CHG         0xC0
+#define MIDI_MSG_C_CHANNEL_AFTER    0xD0
+#define MIDI_MSG_C_PITCH_WHEEL      0xE0
 
 // ---------------------------------------------------------
 // TIPOS de mensajes de SISTEMA
@@ -64,7 +64,7 @@
 #define MIDI_RET_NO                 2
 #define MIDI_RET_ER                 3
 
-
+#define IDE_PAUSA_CAR_RX            1000  // Pausa en microsegundos para lectura de caracteres en recepcion
 
 // ---------------------------------------------------------
 // Estructura para manejar mensajes MIDI
