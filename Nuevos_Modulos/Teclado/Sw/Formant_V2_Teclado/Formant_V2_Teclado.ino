@@ -54,15 +54,20 @@ void setup()
    
    pinMode(IDE_HW_PIN_GATE,OUTPUT);
    
-   pinMode(IE_HW_CANAL_00,INPUT);
-   pinMode(IE_HW_CANAL_01,INPUT); 
-   pinMode(IE_HW_CANAL_02,INPUT);
-   pinMode(IE_HW_CANAL_03,INPUT);
-   
+   pinMode(IDE_HW_CANAL_ID_0,INPUT);
+   pinMode(IDE_HW_CANAL_ID_1,INPUT);
+   pinMode(IDE_HW_CANAL_ID_2,INPUT);
+   pinMode(IDE_HW_CANAL_ID_3,INPUT);
+     
+   c_MIDI.begin();                          // Imprescindible llamar antes de usar c_MIDI
    set_CodigoTecla(0);
    set_GATE(LOW);
    set_LedTeclaOn(LOW);
    get_CanalID();
+
+   #ifdef APP_MODO_DEBUG
+   Serial.println("Formant V2 Controlador MIDI V1.0, modo DEBUG");
+   #endif   
 }
 
 
@@ -79,7 +84,6 @@ void loop()
   int flgNoteOn;
   
   
-  flgNoteOn = false;
   resultado = c_MIDI.get_msg_MIDI();
 
   if ( resultado==MIDI_RET_OK ) 
@@ -88,14 +92,15 @@ void loop()
        // ------------------------------------------------------------
        
        #ifdef APP_MODO_DEBUG
+       Serial.println();
        Serial.print  ("TIPO:" );
-       Serial.println(c_MIDI.get_Type()   ,DEC);
+       Serial.println(c_MIDI.get_Type()   ,HEX);
        Serial.print  ("CANAL:" );
-       Serial.println(c_MIDI.get_Channel(),DEC);
+       Serial.println(c_MIDI.get_Channel(),HEX);
        Serial.print  ("DATA0:" );
-       Serial.println(c_MIDI.get_Data_01(),DEC);
+       Serial.println(c_MIDI.get_Data_01(),HEX);
        Serial.print  ("DATA1:" );
-       Serial.println(c_MIDI.get_Data_02(),DEC);
+       Serial.println(c_MIDI.get_Data_02(),HEX);
        #endif
     
        if ( c_MIDI.get_Channel()==canalID )
@@ -109,28 +114,38 @@ void loop()
                                           
                     case ( MIDI_MSG_C_NOTE_ON ):
                          { // -----------------------------------------------
-                           //             PULSAR la tecla
                            //
-                           // Los codigos MIDI que identifican las teclas van
-                           // del 0 ... 127 0   --> Do mas grave
-                           //               127 --> Teclas mas aguda 
+                           //             PULSAR TECLA
                            //
-                           // En el circuito de  interfaz el Formant V2 , las 
-                           // teclas se  numeran del 1 ...50  porque  son las 
-                           // teclas que existen (4 OCTAVAS).
-                           //
-                           // IMPORTANTE:
-                           // El  codigo  0  se  utiliza  en  el interfaz  del
-                           // Formant V2 para dejar de pulsar  cualquier tecla
-                           // , por lo que las teclas empiezan en el 1 y hasta
-                           // el 50 debido a esto se debe sumar 1 al codigo de
-                           // tecla recibido en un mensaje MIDI
                            // -----------------------------------------------
-                           if ( flgNoteOn==false )
-                              {
-                                flgNoteOn = true;
-                                set_CodigoTecla(c_MIDI.get_Data_01()+1);
-                                set_GATE(HIGH);
+                           if ( c_MIDI.get_Data_02()==0 )
+                              { // -----------------------------------------------
+                                // Un mensaje MIDI_MSG_C_NOTE_ON con velocidad=0
+                                // es equivalente al mensaje MIDI_MSG_C_NOTE_OFF
+                                // -----------------------------------------------
+                                set_CodigoTecla(0);
+                                set_GATE(LOW);
+                                set_LedTeclaOn(LOW);
+                              }
+                           else
+                              { // -----------------------------------------------
+                                // Los codigos MIDI que identifican las teclas van
+                                // del 0 ... 127 0   --> Do mas grave
+                                //               127 --> Teclas mas aguda 
+                                //
+                                // En el circuito de  interfaz el Formant V2 , las 
+                                // teclas se  numeran del 1 ...50  porque  son las 
+                                // teclas que existen (4 OCTAVAS).
+                                //
+                                // IMPORTANTE:
+                                // El  codigo  0  se utiliza  en  el interfaz  del
+                                // Formant V2 para dejar de pulsar cualquier tecla
+                                // ,por lo que las teclas empiezan en el 1 y hasta
+                                // el 50 debido a esto se debe sumar 1  al  codigo
+                                // de tecla recibido en un mensaje MIDI.
+                                // -----------------------------------------------
+                                set_CodigoTecla(c_MIDI.get_Data_01()+1); 
+                                set_GATE(HIGH); 
                                 set_LedTeclaOn(HIGH);
                               }
                            break; 
@@ -138,9 +153,8 @@ void loop()
 
                     case ( MIDI_MSG_C_NOTE_OFF ):
                          { // -----------------------------------------------
-                           //            DEJAR de pulsar tecla
+                           //            DEJAR DE PULSAR TECLA
                            // -----------------------------------------------
-                           flgNoteOn = false;
                            set_CodigoTecla(0);
                            set_GATE(LOW);
                            set_LedTeclaOn(LOW);
@@ -160,6 +174,13 @@ void loop()
           }
     
      }
+ 
+   #ifdef APP_MODO_DEBUG
+   if ( resultado==MIDI_RET_ER)
+      {
+        Serial.println("ERROR" );
+      }
+   #endif   
 
 }
 
@@ -225,8 +246,10 @@ void set_LedTeclaOn(byte modo)
 
 void get_CanalID(void)
 {
-  
-  canalID = 1;  
-  
+   canalID = 0;
+   if ( digitalRead(IDE_HW_CANAL_ID_3)==HIGH ) { canalID += 8; }
+   if ( digitalRead(IDE_HW_CANAL_ID_2)==HIGH ) { canalID += 4; }
+   if ( digitalRead(IDE_HW_CANAL_ID_1)==HIGH ) { canalID += 2; }
+   if ( digitalRead(IDE_HW_CANAL_ID_0)==HIGH ) { canalID += 1; }
 }
 

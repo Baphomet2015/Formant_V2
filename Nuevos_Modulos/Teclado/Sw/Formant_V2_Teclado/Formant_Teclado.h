@@ -29,21 +29,18 @@
 #define APP_MODO_DEBUG            1   // MODO DEBUG: Descomentar este define
                                       // MODO REAL:  Comentar este define
 
-#define IDE_HW_PIN_CLOCK          0   // Pin para generar el codigo de control ( CLOCK )
-#define IDE_HW_PIN_DATA           1   // Pin para generar el codigo de control ( DATA  )
-#define IDE_HW_PIN_LATCH          2   // Pin para generar el codigo de control ( LATCH )
+#define IDE_HW_PIN_CLOCK          5   // Pin para generar el codigo de control ( CLOCK )
+#define IDE_HW_PIN_DATA           4   // Pin para generar el codigo de control ( DATA  )
+#define IDE_HW_PIN_LATCH          6   // Pin para generar el codigo de control ( LATCH )
 
-#define IDE_HW_PIN_GATE           6   // Pin para generar la señal GATE
+#define IDE_HW_PIN_GATE           2   // Pin para generar la señal GATE
 
-#define IDE_HW_PIN_LED_TECLA_ON   7   // Pin para indicar "tecla pulsada"
+#define IDE_HW_PIN_LED_TECLA_ON   3   // Pin para indicar "tecla pulsada"
 
-#define IE_HW_CANAL_00            0
-#define IE_HW_CANAL_01            0
-#define IE_HW_CANAL_02            0
-#define IE_HW_CANAL_03            0
-
-
-
+#define IDE_HW_CANAL_ID_0         7   // Pines para asignar el canal por el que se reciben los mensajes
+#define IDE_HW_CANAL_ID_1         8
+#define IDE_HW_CANAL_ID_2         9
+#define IDE_HW_CANAL_ID_3        10
 
 
 

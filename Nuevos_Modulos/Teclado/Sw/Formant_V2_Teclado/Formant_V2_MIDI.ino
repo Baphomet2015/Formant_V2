@@ -26,27 +26,42 @@
 
 ARDUINO_MIDI::ARDUINO_MIDI()
 {
-  ini();
+  begin();
 }
 
 
 
 // ------------------------------------------------------------
 //
-// void ARDUINO_MIDI::ini(void)
+// void ARDUINO_MIDI::begin(void)
 //
 //
 // ------------------------------------------------------------
 
-void ARDUINO_MIDI::ini(void)
+void ARDUINO_MIDI::begin(void)
+{
+  iniDatos();
+  Serial.begin(MIDI_VEL_TRX);
+}
+
+
+
+// ------------------------------------------------------------
+//
+// void ARDUINO_MIDI::iniDatos(void)
+//
+//
+// ------------------------------------------------------------
+
+void ARDUINO_MIDI::iniDatos(void)
 {
   msg_MIDI.type    = 0;
   msg_MIDI.channel = 0;
   msg_MIDI.data_01 = 0;
   msg_MIDI.data_02 = 0;  
-  
-  Serial.begin(MIDI_VEL_TRX);
+  numBytesDatos    = 0;
 }
+
 
 
 
@@ -64,63 +79,71 @@ void ARDUINO_MIDI::ini(void)
 int ARDUINO_MIDI::get_msg_MIDI(void)
 {
   int  resultado;
-  byte b0;
-  byte b1;
-  byte b2;
   byte nCar;
+  byte aux;
+  
   
   resultado = MIDI_RET_NO;
   nCar      = 0;
-  
-  while ( Serial.available()>0 && (nCar<3) )
-        { // ------------------------------------------------------------
-          //
-          // ------------------------------------------------------------
-          switch ( nCar )
-                 {
-                   case ( 0 ):
-                        { b0 = Serial.read();
-                          nCar++;
-                          break;
-                        }
+
+  while ( Serial.available()>0 )
+        { 
+          resultado = MIDI_RET_ER;
+          aux       = Serial.read();
           
-                   case ( 1 ):
-                        { b1 = Serial.read();
-                          nCar++;
-                          break;
-                        }
-                        
-                   case ( 2 ):
-                        { b2 = Serial.read();
-                          nCar++;
-                          break;
-                        }
-                 }
-        }
-             
-  if ( nCar==3 )
-     { // ------------------------------------------------------------
-       // Se han recibido 3 caracteres, puede ser un mensaje MIDI
-       // ------------------------------------------------------------
-       if ( b0>=B10000000 )
-          { // ------------------------------------------------------------
-            // El bit mas significativo es 1, luego es el byte de ESTADO
-            // ------------------------------------------------------------
-            msg_MIDI.channel = (b0 & B00001111) + 1;
-            msg_MIDI.type    = (b0 & B11110000);
-            msg_MIDI.data_01 = b1;
-            msg_MIDI.data_02 = b2;
-            resultado = MIDI_RET_OK;
-          }     
-       else  
-          { // ------------------------------------------------------------
-            // El bit mas significativo es 0, mensaje INCORRECTO
-            // ------------------------------------------------------------
-            resultado = MIDI_RET_ER;
-          }
-       
-       delayMicroseconds(IDE_PAUSA_CAR_RX); 
-     }  
+          if ( aux>=B10000000 )
+             { // ------------------------------------------------------------
+               // El bit mas significativo es 1, luego es el byte de ESTADO
+               // ------------------------------------------------------------              
+               if ( aux<0xF0 )
+                  { // ------------------------------------------------------------
+                    // A) NO es un mensaje de sistema
+                    // ------------------------------------------------------------  
+                    msg_MIDI.type    = (aux & B11110000);
+                    msg_MIDI.channel = (aux & B00001111) + 1;
+                    if ( (msg_MIDI.type==MIDI_MSG_C_CHANNEL_AFTER) || (msg_MIDI.type==MIDI_MSG_C_PROG_CHG) )  
+                       { // ------------------------------------------------------------  
+                         // Estos mensajes solo tienen 1 dato 
+                         // ------------------------------------------------------------  
+                         numBytesDatos = 1;
+                       }
+                    else
+                       { // ------------------------------------------------------------  
+                         // Resto de mensajes tienen 2 datos 
+                         // ------------------------------------------------------------  
+                         numBytesDatos = 2;
+                       }
+                  }
+               else
+                  { // ------------------------------------------------------------
+                    // B) SI es un mensaje de sistema
+                    // ------------------------------------------------------------ 
+                    msg_MIDI.type    = aux;
+                    msg_MIDI.channel = 0;
+                    numBytesDatos    = 1;
+                  }   
+             }    
+          else
+             { // ------------------------------------------------------------
+               // Running Status o datos de Mensaje
+               // ------------------------------------------------------------
+               if ( msg_MIDI.type!=0 )
+                  {
+                    if ( numBytesDatos!=0 ) 
+                       {
+                         if      ( nCar==0 ) { msg_MIDI.data_01 = aux; }
+                         else if ( nCar==1 ) { msg_MIDI.data_02 = aux; }
+                         nCar++;
+                       }
+                   
+                   if ( numBytesDatos==nCar )
+                      {
+                        resultado = MIDI_RET_OK;
+                      }
+                  }
+             }
+          delayMicroseconds(IDE_PAUSA_CAR_RX);
+       }  
 
   return( resultado); 
 }
