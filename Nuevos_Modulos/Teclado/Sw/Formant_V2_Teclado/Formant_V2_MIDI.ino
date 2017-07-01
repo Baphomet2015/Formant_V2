@@ -59,7 +59,7 @@ void ARDUINO_MIDI::iniDatos(void)
   msg_MIDI.channel = 0;
   msg_MIDI.data_01 = 0;
   msg_MIDI.data_02 = 0;  
-  numBytesDatos    = 0;
+  numBytesDatos    = 2;
 }
 
 
@@ -67,7 +67,7 @@ void ARDUINO_MIDI::iniDatos(void)
 
 // ------------------------------------------------------------
 //
-// int ARDUINO_MIDI::get_msg_MIDI(void)
+// int ARDUINO_MIDI::get_msg_MIDI(byte modo)
 //
 // Retorna:
 // . MIDI_RET_OK  Se ha recibido un mensaje MIDI
@@ -76,7 +76,7 @@ void ARDUINO_MIDI::iniDatos(void)
 //
 // ------------------------------------------------------------
 
-int ARDUINO_MIDI::get_msg_MIDI(void)
+int ARDUINO_MIDI::get_msg_MIDI(byte modo)
 {
   int  resultado;
   byte nCar;
@@ -85,11 +85,17 @@ int ARDUINO_MIDI::get_msg_MIDI(void)
   
   resultado = MIDI_RET_NO;
   nCar      = 0;
-
+  
   while ( Serial.available()>0 )
         { 
           resultado = MIDI_RET_ER;
           aux       = Serial.read();
+          
+          if ( modo==true )
+             {
+               Serial.print  ("BYTE RECIBIDO: ");   
+               Serial.println(aux,DEC);   
+             }
           
           if ( aux>=B10000000 )
              { // ------------------------------------------------------------
@@ -142,7 +148,7 @@ int ARDUINO_MIDI::get_msg_MIDI(void)
                       }
                   }
              }
-          delayMicroseconds(IDE_PAUSA_CAR_RX);
+          delayMicroseconds(IDE_PAUSA_CAR_RX);          
        }  
 
   return( resultado); 

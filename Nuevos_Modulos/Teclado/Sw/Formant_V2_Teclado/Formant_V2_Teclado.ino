@@ -92,7 +92,7 @@ void loop()
   int flgNoteOn;
   
   
-  resultado = c_MIDI.get_msg_MIDI();
+  resultado = c_MIDI.get_msg_MIDI(false);
 
   if ( resultado==MIDI_RET_OK ) 
      { // ------------------------------------------------------------
@@ -268,7 +268,7 @@ void modoTest(void)
   
   while( 1 )
        {
-         resultado = c_MIDI.get_msg_MIDI();
+         resultado = c_MIDI.get_msg_MIDI(true);
 
          if ( resultado==MIDI_RET_OK ) 
             { // ------------------------------------------------------------

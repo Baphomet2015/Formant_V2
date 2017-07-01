@@ -60,6 +60,7 @@
 
 #define MIDI_VEL_TRX                31250  // Velocidad para comunicar con MIDI
 
+
 #define MIDI_RET_OK                 1
 #define MIDI_RET_NO                 2
 #define MIDI_RET_ER                 3
@@ -94,7 +95,7 @@ class ARDUINO_MIDI
    ARDUINO_MIDI();
    
    void begin        (void);
-   int  get_msg_MIDI (void);
+   int  get_msg_MIDI (byte modo);
    byte get_Channel  (void)      { return(msg_MIDI.channel); }
    byte get_Type     (void)      { return(msg_MIDI.type);    }
    byte get_Data_01  (void)      { return(msg_MIDI.data_01); }
