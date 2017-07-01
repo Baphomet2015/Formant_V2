@@ -34,6 +34,7 @@
 
 ARDUINO_MIDI c_MIDI;         // Variable para manejar los datos MIDI
 byte         canalID;        // Canal MIDI asignado al Formant V2
+byte         modoF;          // Modo de funcionamniento: TEST/Normal
 
 
 
@@ -58,16 +59,23 @@ void setup()
    pinMode(IDE_HW_CANAL_ID_1,INPUT);
    pinMode(IDE_HW_CANAL_ID_2,INPUT);
    pinMode(IDE_HW_CANAL_ID_3,INPUT);
+   
+   pinMode(IDE_HW_PIN_TEST,INPUT);
      
    c_MIDI.begin();                          // Imprescindible llamar antes de usar c_MIDI
    set_CodigoTecla(0);
    set_GATE(LOW);
    set_LedTeclaOn(LOW);
    get_CanalID();
-
-   #ifdef APP_MODO_DEBUG
-   Serial.println("Formant V2 Controlador MIDI V1.0, modo DEBUG");
-   #endif   
+    
+   modoF = digitalRead(IDE_HW_PIN_TEST);
+   if ( modoF==LOW )  
+      { // ------------------------------------------------------------
+        // Entrar en modo TEST
+        // ------------------------------------------------------------
+        modoTest(); 
+      }
+     
 }
 
 
@@ -90,19 +98,7 @@ void loop()
      { // ------------------------------------------------------------
        //
        // ------------------------------------------------------------
-       
-       #ifdef APP_MODO_DEBUG
-       Serial.println();
-       Serial.print  ("TIPO:" );
-       Serial.println(c_MIDI.get_Type()   ,HEX);
-       Serial.print  ("CANAL:" );
-       Serial.println(c_MIDI.get_Channel(),HEX);
-       Serial.print  ("DATA0:" );
-       Serial.println(c_MIDI.get_Data_01(),HEX);
-       Serial.print  ("DATA1:" );
-       Serial.println(c_MIDI.get_Data_02(),HEX);
-       #endif
-    
+   
        if ( c_MIDI.get_Channel()==canalID )
           { // -------------------------------------------------------
             // Es un mensaje para este receptor
@@ -175,13 +171,6 @@ void loop()
     
      }
  
-   #ifdef APP_MODO_DEBUG
-   if ( resultado==MIDI_RET_ER)
-      {
-        Serial.println("ERROR" );
-      }
-   #endif   
-
 }
 
 
@@ -194,11 +183,9 @@ void loop()
 
 void set_CodigoTecla(byte tecla)
 {
- 
   digitalWrite(IDE_HW_PIN_LATCH,LOW);
-  shiftOut(IDE_HW_PIN_DATA, IDE_HW_PIN_CLOCK, LSBFIRST, tecla);
+  shiftOut(IDE_HW_PIN_DATA, IDE_HW_PIN_CLOCK, MSBFIRST, tecla);
   digitalWrite(IDE_HW_PIN_LATCH,HIGH);
-     
 }
   
   
@@ -252,4 +239,107 @@ void get_CanalID(void)
    if ( digitalRead(IDE_HW_CANAL_ID_1)==HIGH ) { canalID += 2; }
    if ( digitalRead(IDE_HW_CANAL_ID_0)==HIGH ) { canalID += 1; }
 }
+
+
+
+
+// ------------------------------------------------------------
+//
+// void modoTest(void)
+//
+// ------------------------------------------------------------
+
+void modoTest(void)
+{
+  int               resultado;  
+  byte              modo;
+  unsigned long int m;
+  unsigned long int t;
+   
+
+  
+  Serial.println(IDE_STR_VERSION);
+  Serial.print(IDE_STR_MSG_03);
+  Serial.println(canalID,DEC);
+  Serial.println(IDE_STR_MSG_04);
+  Serial.println(IDE_STR_MSG_01);
+
+  m = millis();
+  
+  while( 1 )
+       {
+         resultado = c_MIDI.get_msg_MIDI();
+
+         if ( resultado==MIDI_RET_OK ) 
+            { // ------------------------------------------------------------
+              // Decodifica el mensaje y muestra lo recibido
+              // ------------------------------------------------------------
+              Serial.println();
+              Serial.print  ("TIPO:" );
+              Serial.println(c_MIDI.get_Type()   ,HEX);
+              Serial.print  ("CANAL:" );
+              Serial.println(c_MIDI.get_Channel(),HEX);
+              Serial.print  ("DATA0:" );
+              Serial.println(c_MIDI.get_Data_01(),HEX);
+              Serial.print  ("DATA1:" );
+              Serial.println(c_MIDI.get_Data_02(),HEX);
+           }
+        else
+            { // ------------------------------------------------------------
+              // ERROR
+              // ------------------------------------------------------------
+              if ( resultado==MIDI_RET_ER )
+                 {
+                   Serial.println(IDE_STR_MSG_02);
+                 }
+           }
+
+         t = millis();
+         if ( (t-m)>=IDE_PAUSA_TEST )
+            {
+              m = t;
+              
+              if ( modo==HIGH ) { modo = LOW;  }
+              else              { modo = HIGH; }
+              set_GATE(modo);
+              set_LedTeclaOn(modo);
+            }
+      }
+  
+}
+
+
+
+// ------------------------------------------------------------
+//
+// void pausa(void)
+//
+// ------------------------------------------------------------
+
+void pausa(void)
+{
+  unsigned long int m;
+   
+  m = millis();
+  
+  while( 1 )
+       {
+         if ( (millis()-m)>=1000 )
+            {
+              break;
+           }   
+      }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -58,8 +58,7 @@
 #define MIDI_MSG_S_ACTIVE_SENSING   0xFD
 #define MIDI_MSG_S_RESET            0xFF
 
-#define MIDI_VEL_TRX              31250  // Velocidad para comunicar con MIDI
-//#define MIDI_VEL_TRX                9600  // Velocidad para comunicar con MIDI
+#define MIDI_VEL_TRX                31250  // Velocidad para comunicar con MIDI
 
 #define MIDI_RET_OK                 1
 #define MIDI_RET_NO                 2

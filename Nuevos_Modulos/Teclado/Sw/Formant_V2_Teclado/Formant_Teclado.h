@@ -26,9 +26,6 @@
 //
 // ---------------------------------------------------------
 
-#define APP_MODO_DEBUG            1   // MODO DEBUG: Descomentar este define
-                                      // MODO REAL:  Comentar este define
-
 #define IDE_HW_PIN_CLOCK          5   // Pin para generar el codigo de control ( CLOCK )
 #define IDE_HW_PIN_DATA           4   // Pin para generar el codigo de control ( DATA  )
 #define IDE_HW_PIN_LATCH          6   // Pin para generar el codigo de control ( LATCH )
@@ -42,9 +39,18 @@
 #define IDE_HW_CANAL_ID_2         9
 #define IDE_HW_CANAL_ID_3        10
 
+#define IDE_HW_PIN_TEST          11   // Pulsador para entrar en el modo TEST
 
 
 
+#define IDE_STR_VERSION          "Formant V2 Controlador MIDI V1.0, modo TEST"
+#define IDE_STR_MSG_01           "Esperando mensajes MIDI..."
+#define IDE_STR_MSG_02           "Mensaje ERROR..."
+#define IDE_STR_MSG_03           "Canal MIDI asignado: "
+#define IDE_STR_MSG_04           "La senal GATE y el LED de Tecla Pulsada se estan generando automaticamente..."
+
+
+#define IDE_PAUSA_TEST          1000 // Pausa en modo TEST, 1 segundo
 
 #endif
 
