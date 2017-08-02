@@ -48,6 +48,7 @@
 #define IDE_STR_MSG_02           "Mensaje ERROR..."
 #define IDE_STR_MSG_03           "Canal MIDI asignado: "
 #define IDE_STR_MSG_04           "La senal GATE y el LED de Tecla Pulsada se estan generando automaticamente..."
+#define IDE_STR_MSG_05           "Datos en DECIMAL..."
 
 
 #define IDE_PAUSA_TEST          1000 // Pausa en modo TEST, 1 segundo
