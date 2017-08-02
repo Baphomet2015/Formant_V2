@@ -93,8 +93,8 @@ int ARDUINO_MIDI::get_msg_MIDI(byte modo)
           
           if ( modo==true )
              {
-               Serial.print  ("BYTE RECIBIDO: ");   
-               Serial.println(aux,DEC);   
+               Serial.print  ("BYTE RECIBIDO (DEC): ");   
+               Serial.println(aux,DEC);  
              }
           
           if ( aux>=B10000000 )

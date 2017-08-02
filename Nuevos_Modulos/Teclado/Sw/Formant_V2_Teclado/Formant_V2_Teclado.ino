@@ -259,11 +259,9 @@ void modoTest(void)
 
   
   Serial.println(IDE_STR_VERSION);
-  Serial.print(IDE_STR_MSG_03);
-  Serial.println(canalID,DEC);
-  Serial.println(IDE_STR_MSG_05);
   Serial.println(IDE_STR_MSG_04);
   Serial.println(IDE_STR_MSG_01);
+  Serial.println();
 
   m = millis();
   
@@ -275,14 +273,18 @@ void modoTest(void)
             { // ------------------------------------------------------------
               // Decodifica el mensaje y muestra lo recibido
               // ------------------------------------------------------------
-              Serial.print  ("TIPO:" );
-              Serial.println(c_MIDI.get_Type()   ,DEC);
-              Serial.print  ("CANAL:" );
-              Serial.println(c_MIDI.get_Channel(),DEC);
-              Serial.print  ("DATA0:" );
+              Serial.print  ("MENSAJE (HEX):" );
+              Serial.println(c_MIDI.get_Type()   ,HEX);
+              
+              Serial.print  ("CANAL (HEX):" );
+              Serial.println(c_MIDI.get_Channel(),HEX);
+              
+              Serial.print  ("DATA0 (DEC):" );
               Serial.println(c_MIDI.get_Data_01(),DEC);
-              Serial.print  ("DATA1:" );
+              
+              Serial.print  ("DATA1 (DEC):" );
               Serial.println(c_MIDI.get_Data_02(),DEC);
+              
               Serial.println();
            }
         else
