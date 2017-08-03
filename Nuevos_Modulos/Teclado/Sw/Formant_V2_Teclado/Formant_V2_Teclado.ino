@@ -166,6 +166,22 @@ void loop()
                            set_LedTeclaOn(LOW);
                            break; 
                          }    
+                        
+                    case ( MIDI_MSG_C_CTRL_CHG ):
+                         { // -----------------------------------------------
+                           //            CAMBIO DE CONTROL
+                           // -----------------------------------------------
+                            if ( c_MIDI.get_Data_01()==123 )
+                               { // -----------------------------------------------
+                                 // OFF de todas las Teclas
+                                 // -----------------------------------------------
+                                 set_CodigoTecla(0);
+                                 set_GATE(LOW);
+                                 set_LedTeclaOn(LOW);
+                               }
+                           break; 
+                         }    
+                         
                   }
           }
     
