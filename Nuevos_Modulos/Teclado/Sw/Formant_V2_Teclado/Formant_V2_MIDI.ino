@@ -145,6 +145,7 @@ int ARDUINO_MIDI::get_msg_MIDI(byte modo)
                    if ( numBytesDatos==nCar )
                       {
                         resultado = MIDI_RET_OK;
+                        break;
                       }
                   }
              }
