@@ -32,10 +32,10 @@
 // ------------------------------------------------------------
 
 
-ARDUINO_MIDI c_MIDI;         // Variable para manejar los datos MIDI
-byte         canalID;        // Canal MIDI asignado al Formant V2
-byte         modoF;          // Modo de funcionamniento: TEST/Normal
-
+ARDUINO_MIDI c_MIDI;          // Variable para manejar los datos MIDI
+byte         canalID;         // Canal MIDI asignado al Formant V2
+byte         modoF;           // Modo de funcionamniento: TEST/Normal
+byte         nTeclasPulsadas; // Numero de teclas pulsadas a la vez
 
 
 // ------------------------------------------------------------
@@ -68,6 +68,8 @@ void setup()
    set_LedTeclaOn(LOW);
    get_CanalID();
     
+   nTeclasPulsadas = 0;
+   
    modoF = digitalRead(IDE_HW_PIN_TEST);
    if ( modoF==LOW )  
       { // ------------------------------------------------------------
@@ -89,11 +91,10 @@ void setup()
 void loop()
 {
   int resultado;
-  int flgNoteOn;
   
   
   resultado = c_MIDI.get_msg_MIDI(false);
-
+  
   if ( resultado==MIDI_RET_OK ) 
      { // ------------------------------------------------------------
        //
@@ -103,9 +104,10 @@ void loop()
           { // -------------------------------------------------------
             // Es un mensaje para este receptor
             // -------------------------------------------------------
+                        
             switch( c_MIDI.get_Type() )
                   { // -----------------------------------------------
-                    //
+                    // Determina el tipo de mensaje
                     // -----------------------------------------------
                                           
                     case ( MIDI_MSG_C_NOTE_ON ):
@@ -119,9 +121,18 @@ void loop()
                                 // Un mensaje MIDI_MSG_C_NOTE_ON con velocidad=0
                                 // es equivalente al mensaje MIDI_MSG_C_NOTE_OFF
                                 // -----------------------------------------------
-                                set_CodigoTecla(0);
-                                set_GATE(LOW);
-                                set_LedTeclaOn(LOW);
+
+                                if ( nTeclasPulsadas>0 )
+                                   {
+                                     nTeclasPulsadas--;
+                                   }
+                                   
+                                if ( nTeclasPulsadas==0 )
+                                   {
+                                     set_CodigoTecla(0);
+                                     set_GATE(LOW);
+                                     set_LedTeclaOn(LOW);
+                                   }
                               }
                            else
                               { // -----------------------------------------------
@@ -140,6 +151,7 @@ void loop()
                                 // el 50 debido a esto se debe sumar 1  al  codigo
                                 // de tecla recibido en un mensaje MIDI.
                                 // -----------------------------------------------
+                                nTeclasPulsadas++;
                                 set_CodigoTecla(c_MIDI.get_Data_01()+1); 
                                 set_GATE(HIGH); 
                                 set_LedTeclaOn(HIGH);
@@ -150,10 +162,20 @@ void loop()
                     case ( MIDI_MSG_C_NOTE_OFF ):
                          { // -----------------------------------------------
                            //            DEJAR DE PULSAR TECLA
+                           //  Si solo hay una tecla pulsada, se puede dejar 
+                           //  de pulsar
                            // -----------------------------------------------
-                           set_CodigoTecla(0);
-                           set_GATE(LOW);
-                           set_LedTeclaOn(LOW);
+                           if ( nTeclasPulsadas>0 )
+                              {
+                                nTeclasPulsadas--;
+                              }
+
+                           if ( nTeclasPulsadas==0 )
+                              {
+                                set_CodigoTecla(0);
+                                set_GATE(LOW);
+                                set_LedTeclaOn(LOW);
+                              }
                            break; 
                          }
                          
@@ -161,9 +183,8 @@ void loop()
                          { // -----------------------------------------------
                            //            RESET DE SISTEMA
                            // -----------------------------------------------
-                           set_CodigoTecla(0);
-                           set_GATE(LOW);
-                           set_LedTeclaOn(LOW);
+                           nTeclasPulsadas = 0;
+                           tecla_OFF();
                            break; 
                          }    
                         
@@ -171,13 +192,12 @@ void loop()
                          { // -----------------------------------------------
                            //            CAMBIO DE CONTROL
                            // -----------------------------------------------
-                            if ( c_MIDI.get_Data_01()==123 )
+                            if ( c_MIDI.get_Data_01()==MIDI_MSG_C_TECLAS_OFF )
                                { // -----------------------------------------------
                                  // OFF de todas las Teclas
                                  // -----------------------------------------------
-                                 set_CodigoTecla(0);
-                                 set_GATE(LOW);
-                                 set_LedTeclaOn(LOW);
+                                 nTeclasPulsadas = 0;
+                                 tecla_OFF();
                                }
                            break; 
                          }    
@@ -188,6 +208,23 @@ void loop()
      }
  
 }
+
+
+
+// ------------------------------------------------------------
+//
+// void tecla_OFF(void)
+//
+//
+// ------------------------------------------------------------
+
+void tecla_OFF(void)
+{
+  set_CodigoTecla(0);
+  set_GATE(LOW);
+  set_LedTeclaOn(LOW);
+}
+
 
 
 // ------------------------------------------------------------
@@ -275,6 +312,8 @@ void modoTest(void)
 
   
   Serial.println(IDE_STR_VERSION);
+  Serial.print  (IDE_STR_MSG_03);
+  Serial.println(canalID);
   Serial.println(IDE_STR_MSG_04);
   Serial.println(IDE_STR_MSG_01);
   Serial.println();
@@ -289,18 +328,18 @@ void modoTest(void)
             { // ------------------------------------------------------------
               // Decodifica el mensaje y muestra lo recibido
               // ------------------------------------------------------------
-              Serial.print  ("MENSAJE (HEX):" );
-              Serial.println(c_MIDI.get_Type()   ,HEX);
-              
-              Serial.print  ("CANAL (HEX):" );
-              Serial.println(c_MIDI.get_Channel(),HEX);
-              
-              Serial.print  ("DATA0 (DEC):" );
-              Serial.println(c_MIDI.get_Data_01(),DEC);
-              
-              Serial.print  ("DATA1 (DEC):" );
-              Serial.println(c_MIDI.get_Data_02(),DEC);
-              
+              Serial.print("MENSAJE:" );
+              Serial.print(c_MIDI.get_Type(),HEX);
+              Serial.print("Hex ");            
+              Serial.print("CANAL:" );
+              Serial.print(c_MIDI.get_Channel(),HEX);
+              Serial.print("Dec ");            
+              Serial.print("DATA0:" );
+              Serial.print(c_MIDI.get_Data_01(),DEC);
+              Serial.print("Dec ");            
+              Serial.print("DATA1:" );
+              Serial.print(c_MIDI.get_Data_02(),DEC);
+              Serial.print("Dec ");            
               Serial.println();
            }
         else
@@ -343,7 +382,7 @@ void pausa(void)
   
   while( 1 )
        {
-         if ( (millis()-m)>=1000 )
+         if ( (millis()-m)>=1000L )
             {
               break;
            }   

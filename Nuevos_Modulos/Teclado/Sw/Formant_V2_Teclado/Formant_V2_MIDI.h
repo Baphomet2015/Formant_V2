@@ -58,6 +58,15 @@
 #define MIDI_MSG_S_ACTIVE_SENSING   0xFD
 #define MIDI_MSG_S_RESET            0xFF
 
+// ---------------------------------------------------------
+// Identificadores de controles
+// ---------------------------------------------------------
+
+#define MIDI_MSG_C_TECLAS_OFF       0x7B
+
+
+
+
 #define MIDI_VEL_TRX                31250  // Velocidad para comunicar con MIDI
 
 
