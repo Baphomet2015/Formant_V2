@@ -1509,7 +1509,7 @@ Wire Wire Line
 Wire Wire Line
 	2125 1100 3750 1100
 Wire Wire Line
-	1925 775  1475 775 
+	725  775  1925 775 
 $Comp
 L +15V #PWR?
 U 1 1 598FDEF2
@@ -2061,8 +2061,6 @@ F 3 "" H 1400 1400 50  0000 C CNN
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	725  1000 1525 1000
-Wire Wire Line
 	1400 1000 1400 1250
 Wire Wire Line
 	1525 1200 1475 1200
@@ -2103,12 +2101,6 @@ F 3 "" H 725 1400 50  0000 C CNN
 	1    725  1400
 	-1   0    0    1   
 $EndComp
-Wire Wire Line
-	725  1000 725  1250
-Connection ~ 1400 1000
-Wire Wire Line
-	1075 1250 1075 1000
-Connection ~ 1075 1000
 $Comp
 L POT_TRIM RV?
 U 1 1 59917954
@@ -2355,4 +2347,12 @@ Wire Wire Line
 Text GLabel 8275 1500 2    60   Output ~ 0
 KBV
 Connection ~ 7200 1500
+Wire Wire Line
+	1400 1000 1525 1000
+Wire Wire Line
+	725  775  725  1250
+Connection ~ 1475 775 
+Wire Wire Line
+	1075 1250 1075 775 
+Connection ~ 1075 775 
 $EndSCHEMATC
