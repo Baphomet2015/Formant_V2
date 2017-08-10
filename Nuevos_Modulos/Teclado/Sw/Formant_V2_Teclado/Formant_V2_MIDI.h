@@ -67,6 +67,7 @@
 
 
 
+
 #define MIDI_VEL_TRX                31250  // Velocidad para comunicar con MIDI
 
 
@@ -86,7 +87,6 @@ struct t_msg_MIDI
   byte channel;
   byte data_01;
   byte data_02;
-
 };
 
 typedef struct t_msg_MIDI TYPE_MSG_MIDI;
@@ -94,6 +94,8 @@ typedef struct t_msg_MIDI TYPE_MSG_MIDI;
 
 // ---------------------------------------------------------
 // Clase de manejo de MIDI
+// ANTES de uilizar la clase se DEBE llamara a la funcion
+// begin()
 // ---------------------------------------------------------
 
 class ARDUINO_MIDI
@@ -103,7 +105,7 @@ class ARDUINO_MIDI
    
    ARDUINO_MIDI();
    
-   void begin        (void);
+   void begin        (byte canalAsignado);
    int  get_msg_MIDI (byte modo);
    byte get_Channel  (void)      { return(msg_MIDI.channel); }
    byte get_Type     (void)      { return(msg_MIDI.type);    }
@@ -113,10 +115,11 @@ class ARDUINO_MIDI
    
  private:
  
-   void iniDatos (void);
+   void iniDatos (void);         // Inicializa los campos de datos, menos canalID
    
-   byte          numBytesDatos;
-   TYPE_MSG_MIDI msg_MIDI;
+   byte          numBytesDatos;  // Numero de bytes de datos del mensaje MIDI manejeado
+   byte          canalID;        // Canal asignado al HW que usa esta clase
+   TYPE_MSG_MIDI msg_MIDI;       // Datos que forman el mensaje MIDI
 
 
 

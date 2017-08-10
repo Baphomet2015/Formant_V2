@@ -36,10 +36,10 @@ EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
-Title ""
-Date ""
-Rev ""
-Comp ""
+Title "interfaz MIDI, Formant V2"
+Date "10/08/2017"
+Rev "1.0"
+Comp "FORMANT V2"
 Comment1 ""
 Comment2 ""
 Comment3 ""

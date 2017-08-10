@@ -1,45 +1,12 @@
-resultado = c_MIDI.get_msg_MIDI();
-
-  if ( resultado==MIDI_RET_OK ) 
-     { // ------------------------------------------------------------
-       //
-       // ------------------------------------------------------------
-       
-       #ifdef APP_MODO_DEBUG
-       Serial.println();
-       Serial.print  ("TIPO:" );
-       Serial.println(c_MIDI.get_Type()   ,HEX);
-       Serial.print  ("CANAL:" );
-       Serial.println(c_MIDI.get_Channel(),HEX);
-       Serial.print  ("DATA0:" );
-       Serial.println(c_MIDI.get_Data_01(),HEX);
-       Serial.print  ("DATA1:" );
-       Serial.println(c_MIDI.get_Data_02(),HEX);
-       #endif
-    
-       if ( c_MIDI.get_Channel()==canalID )
-          { // -------------------------------------------------------
-            // Es un mensaje para este receptor
-            // -------------------------------------------------------
-            switch( c_MIDI.get_Type() )
-                  { // -----------------------------------------------
-                    //
-                    // -----------------------------------------------
-                                          
-                    case ( MIDI_MSG_C_NOTE_ON ):
-                         { // -----------------------------------------------
-                           //
-                           //             PULSAR TECLA
-                           //
-                           // -----------------------------------------------
+                           
                            if ( c_MIDI.get_Data_02()==0 )
                               { // -----------------------------------------------
+                                // Comprueba el parametro 2 del mensaje.
                                 // Un mensaje MIDI_MSG_C_NOTE_ON con velocidad=0
                                 // es equivalente al mensaje MIDI_MSG_C_NOTE_OFF
                                 // -----------------------------------------------
-                                set_CodigoTecla(0);
-                                set_GATE(LOW);
-                                set_LedTeclaOn(LOW);
+                                tab_TeclasEstado[teclaID] = IDE_TECLA_ESTADO_OFF;     
+                                tecla_OFF_1();
                               }
                            else
                               { // -----------------------------------------------
@@ -48,50 +15,48 @@ resultado = c_MIDI.get_msg_MIDI();
                                 //               127 --> Teclas mas aguda 
                                 //
                                 // En el circuito de  interfaz el Formant V2 , las 
-                                // teclas se  numeran del 1 ...50  porque  son las 
-                                // teclas que existen (4 OCTAVAS).
+                                // teclas se  numeran del 1 ...49  porque  son las 
+                                // teclas que maneja el HW (4 OCTAVAS).
                                 //
                                 // IMPORTANTE:
-                                // El  codigo  0  se utiliza  en  el interfaz  del
+                                // El codigo valor 0 se utiliza EN EL INTERFAZ del
                                 // Formant V2 para dejar de pulsar cualquier tecla
-                                // ,por lo que las teclas empiezan en el 1 y hasta
-                                // el 50 debido a esto se debe sumar 1  al  codigo
-                                // de tecla recibido en un mensaje MIDI.
+                                // (queda seleccionada la entrada 0 del multiplexor
+                                // que esta unida a GND), por  lo que  las  teclas
+                                // empiezan en el 1 y hasta el 49 debido a esto se
+                                // debe sumar 1 al codigo de  tecla recibido en un
+                                // mensaje MIDI.
                                 // -----------------------------------------------
-                                set_CodigoTecla(c_MIDI.get_Data_01()+1); 
-                                set_GATE(HIGH); 
-                                set_LedTeclaOn(HIGH);
-                              }
-                           break; 
-                         }
+                                
+                                if ( (teclaID>=IDE_MIN_TECLA_ID) && (teclaID<=IDE_MAX_TECLA_ID) )
+                                   { // -------------------------------------------------
+                                     // Procesa la tecla pulsada porque es un codigo MIDI
+                                     // de tecla dentro del rango utilizable
+                                     // 1 Pone a ON la posicion correspondiente en la tabla
+                                     //   de estados de teclas
+                                     // 2 determina cual es la tecla mas  baja  de las que
+                                     //   estan pulsadas simultaneamente(si hubiera mas de una )
+                                     //   para dejarla pulsada
+                                     //
+                                     //
+                                     //
+                                     // -------------------------------------------------
 
-                    case ( MIDI_MSG_C_NOTE_OFF ):
-                         { // -----------------------------------------------
-                           //            DEJAR DE PULSAR TECLA
-                           // -----------------------------------------------
-                           set_CodigoTecla(0);
-                           set_GATE(LOW);
-                           set_LedTeclaOn(LOW);
-                           break; 
-                         }
-                         
-                    case ( MIDI_MSG_S_RESET ):
-                         { // -----------------------------------------------
-                           //            RESET DE SISTEMA
-                           // -----------------------------------------------
-                           set_CodigoTecla(0);
-                           set_GATE(LOW);
-                           set_LedTeclaOn(LOW);
-                           break; 
-                         }    
-                  }
-          }
-    
-     }
- 
-   #ifdef APP_MODO_DEBUG
-   if ( resultado==MIDI_RET_ER)
-      {
-        Serial.println("ERROR" );
-      }
-   #endif   
+                                     tab_TeclasEstado[teclaID] = IDE_TECLA_ESTADO_ON;
+                                    
+                                     teclaID = 0;
+                                     for ( idx=IDE_MAX_TECLA_ID;idx>=0;idx-- )
+                                         { // -------------------------------------------------
+                                           // Recorre la tabla de MAYOR a MENOR para determinar 
+                                           // la tecla mas baja que esta pulsada
+                                           // -------------------------------------------------
+                                           if ( tab_TeclasEstado[idx]==IDE_TECLA_ESTADO_ON )
+                                              {
+                                                teclaID = idx;
+                                              }
+                                         }  
+                                       
+                                     // Finalmente, deja pulsada la tecla mas baja  
+                                     tecla_ON(teclaID+1);
+                                   }                                
+                              }

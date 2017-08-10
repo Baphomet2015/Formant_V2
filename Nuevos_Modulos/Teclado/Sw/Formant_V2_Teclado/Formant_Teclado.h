@@ -10,7 +10,7 @@
 //
 // Funcionalidad:  Fichero cabecera ( include ) principal de
 //                 definiciones  de la aplicación de control 
-//                 del teclado.
+//                 del interfaz MIDI de teclado.
 //
 // Notas:          REVISADO --        
 //
@@ -51,7 +51,24 @@
 
 
 
-#define IDE_PAUSA_TEST          1000 // Pausa en modo TEST, 1 segundo
+#define IDE_PAUSA_TEST           500 // Pausa en modo TEST, 500 milisegundos
+
+#define IDE_MIN_TECLA_ID         0    // Codigo MIDI de la tecla mas baja que se reconoce
+#define IDE_MAX_TECLA_ID         49   // Codigo MIDI de la tecla mas alta que se reconoce
+                                      // IMPORTANTE:
+                                      // El codigo MIDI de la tecla MAS ALTA que se puede manejar se utiliza tambien
+                                      // para dimensionar la tabla de estado de las teclas (variable global tab_TeclasEstado)
+                                      
+#define IDE_TECLA_ESTADO_ON      1    // Indica que la tecla correspondiente esta pulsada (ON)
+#define IDE_TECLA_ESTADO_OFF     0    // Indica que la tecla correspondiente esta sin pulsar (OFF)
+
+
+
+
+
+
+
+
 
 #endif
 

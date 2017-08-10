@@ -7,8 +7,8 @@
 // Autor:
 // Fecha:          Junio 2017
 //
-// Funcionalidad:  Fichero cabecera ( include ) principal de
-//                 definiciones MIDI
+// Funcionalidad:  Fichero principal ( main ) de definiciones
+//                 de la clase MIDI
 //
 // Notas:          REVISADO --        
 //
@@ -26,20 +26,24 @@
 
 ARDUINO_MIDI::ARDUINO_MIDI()
 {
-  begin();
+
+  
+  
+  
 }
 
 
 
 // ------------------------------------------------------------
 //
-// void ARDUINO_MIDI::begin(void)
+// void ARDUINO_MIDI::begin(byte canalAsignado)
 //
 //
 // ------------------------------------------------------------
 
-void ARDUINO_MIDI::begin(void)
+void ARDUINO_MIDI::begin(byte canalAsignado)
 {
+  canalID = canalAsignado;
   iniDatos();
   Serial.begin(MIDI_VEL_TRX);
 }
@@ -69,6 +73,10 @@ void ARDUINO_MIDI::iniDatos(void)
 //
 // int ARDUINO_MIDI::get_msg_MIDI(byte modo)
 //
+// modo:
+// . True  Envia por el puerto serie los bytes que recibe
+// . False NO envia nada(modo normal de funcionamiento)
+//
 // Retorna:
 // . MIDI_RET_OK  Se ha recibido un mensaje MIDI
 // . MIDI_RET_NO  NO se ha recibido ningun mensaje
@@ -93,14 +101,18 @@ int ARDUINO_MIDI::get_msg_MIDI(byte modo)
           
           if ( modo==true )
              {
-               Serial.print  ("BYTE RECIBIDO (DEC): ");   
+               Serial.print  ("Byte recibido (Dec): ");   
                Serial.println(aux,DEC);  
              }
           
           if ( aux>=B10000000 )
              { // ------------------------------------------------------------
-               // El bit mas significativo es 1, luego es el byte de ESTADO
-               // ------------------------------------------------------------              
+               // El bit mas significativo es 1, luego es un byte de ESTADO
+               // ------------------------------------------------------------       
+        
+               msg_MIDI.data_01 = 0;
+               msg_MIDI.data_02 = 0;  
+               
                if ( aux<0xF0 )
                   { // ------------------------------------------------------------
                     // A) NO es un mensaje de sistema
@@ -123,9 +135,13 @@ int ARDUINO_MIDI::get_msg_MIDI(byte modo)
                else
                   { // ------------------------------------------------------------
                     // B) SI es un mensaje de sistema
+                    //    Como los mensajes de sistema son "globales" es  decir los 
+                    //    tienen que ejecutar TODOS los dispositivos MIDI conectados
+                    //    se toma como canal, el canal asignado al HW  para que este
+                    //    mensaje se reconozca como suyo
                     // ------------------------------------------------------------ 
                     msg_MIDI.type    = aux;
-                    msg_MIDI.channel = 0;
+                    msg_MIDI.channel = canalID;
                     numBytesDatos    = 1;
                   }   
              }    

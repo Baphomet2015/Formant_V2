@@ -2343,7 +2343,7 @@ Wire Wire Line
 	6650 1800 6650 1975
 Connection ~ 5450 1400
 Wire Wire Line
-	7050 1500 7200 1500
+	7050 1500 8275 1500
 Wire Wire Line
 	7200 1500 7200 1100
 Wire Wire Line
@@ -2352,4 +2352,7 @@ Wire Wire Line
 	6325 1100 6325 1600
 Wire Wire Line
 	6325 1600 6450 1600
+Text GLabel 8275 1500 2    60   Output ~ 0
+KBV
+Connection ~ 7200 1500
 $EndSCHEMATC
