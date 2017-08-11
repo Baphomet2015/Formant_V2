@@ -96,9 +96,7 @@ void setup()
       { // ------------------------------------------------------------
         // Entrar en modo TEST
         // ------------------------------------------------------------
-        //modoTest(); 
-        
-        canalID = 1;
+        modoTest(); 
       }
      
 }
@@ -188,6 +186,12 @@ void msg_MIDI_Tecla_ON(void)
                       
   teclaID = c_MIDI.get_Data_01(); // Recupera el codigo de la tecla pulsada
   
+  #ifdef DEBUG_MIDI 
+  Serial.println();
+  Serial.print  ("Tecla: ");
+  Serial.println(teclaID,DEC);
+  #endif
+  
   if ( (teclaID>=IDE_MIN_TECLA_ID) && (teclaID<=IDE_MAX_TECLA_ID) )
      { // -------------------------------------------------
        // Procesa la tecla pulsada porque es un codigo MIDI
@@ -243,6 +247,12 @@ void msg_MIDI_Tecla_OFF(void)
   byte teclaID;                         
                
   teclaID = c_MIDI.get_Data_01(); // Recupera el codigo de la tecla pulsada
+
+  #ifdef DEBUG_MIDI 
+  Serial.println();
+  Serial.print  ("Tecla: ");
+  Serial.println(teclaID,DEC);
+  #endif
                            
   if ( (teclaID>=IDE_MIN_TECLA_ID) && (teclaID<=IDE_MAX_TECLA_ID) )
      { // -------------------------------------------------
@@ -342,8 +352,11 @@ void activarTeclaPulsada(void)
 {
   int idx;  
   byte teclaID;
+  byte teclaPulsada;
   
-  teclaID = 0;
+  
+  teclaID      = 0;
+  teclaPulsada = false;
   
   #ifdef DEBUG_MIDI 
   Serial.println();
@@ -361,11 +374,12 @@ void activarTeclaPulsada(void)
 
         if ( tab_TeclasEstado[idx]==IDE_TECLA_ESTADO_ON )
            {
-             teclaID = idx;
+             teclaID      = idx;
+             teclaPulsada = true;
            }
       }  
         
-  if ( teclaID==0 )
+  if ( teclaPulsada==false )
      { // NO pulsar nada
        tecla_OFF();
      }
@@ -487,8 +501,7 @@ void modoTest(void)
               // Decodifica el mensaje y muestra lo recibido
               // ------------------------------------------------------------
               Serial.println();
-              Serial.println();
-              
+                            
               Serial.print("MENSAJE: " );
               Serial.print(c_MIDI.get_Type(),HEX);
               Serial.println("H ");       
@@ -503,6 +516,7 @@ void modoTest(void)
               
               Serial.print("DATA1:   " );
               Serial.print(c_MIDI.get_Data_02(),DEC);
+              Serial.println();
               Serial.println();
            }
         else
