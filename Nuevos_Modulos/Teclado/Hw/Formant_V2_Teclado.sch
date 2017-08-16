@@ -30,6 +30,7 @@ LIBS:contrib
 LIBS:valves
 LIBS:arduino
 LIBS:switches
+LIBS:Baphomet_Libreria
 LIBS:Formant_V2_Teclado-cache
 EELAYER 25 0
 EELAYER END
@@ -2355,4 +2356,126 @@ Connection ~ 1475 775
 Wire Wire Line
 	1075 1250 1075 775 
 Connection ~ 1075 775 
+$Comp
+L POT RV?
+U 1 1 599497D0
+P 7500 8275
+F 0 "RV?" H 7900 8425 50  0000 C CNN
+F 1 "COM Volumen" H 8075 8350 50  0000 C CNN
+F 2 "" H 7500 8275 50  0000 C CNN
+F 3 "" H 7500 8275 50  0000 C CNN
+	1    7500 8275
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7950 7400 7750 7400
+Wire Wire Line
+	7750 7400 7750 8325
+Wire Wire Line
+	7750 8275 7650 8275
+$Comp
+L GND #PWR?
+U 1 1 59949BFE
+P 7500 8550
+F 0 "#PWR?" H 7500 8300 50  0001 C CNN
+F 1 "GND" H 7500 8400 50  0000 C CNN
+F 2 "" H 7500 8550 50  0000 C CNN
+F 3 "" H 7500 8550 50  0000 C CNN
+	1    7500 8550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7500 8425 7500 8550
+$Comp
+L +5V #PWR?
+U 1 1 5994A5AB
+P 7500 8025
+F 0 "#PWR?" H 7500 7875 50  0001 C CNN
+F 1 "+5V" H 7500 8165 50  0000 C CNN
+F 2 "" H 7500 8025 50  0000 C CNN
+F 3 "" H 7500 8025 50  0000 C CNN
+	1    7500 8025
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7500 8025 7500 8125
+Text GLabel 6900 7300 0    60   Output ~ 0
+COM_VOL_DATA
+Wire Wire Line
+	6900 7300 7950 7300
+Text GLabel 6900 7200 0    60   Output ~ 0
+COM_VOL_RESET
+Wire Wire Line
+	6900 7200 7950 7200
+Text GLabel 6900 7100 0    60   Output ~ 0
+COM_VOL_CLOCK
+Wire Wire Line
+	6900 7100 7950 7100
+$Comp
+L R R?
+U 1 1 5994F6D2
+P 7250 8275
+F 0 "R?" V 7300 8425 50  0000 C CNN
+F 1 "100K" V 7250 8275 50  0000 C CNN
+F 2 "" V 7180 8275 50  0000 C CNN
+F 3 "" H 7250 8275 50  0000 C CNN
+	1    7250 8275
+	-1   0    0    1   
+$EndComp
+$Comp
+L R R?
+U 1 1 5994F842
+P 7100 8275
+F 0 "R?" V 7150 8425 50  0000 C CNN
+F 1 "100K" V 7100 8275 50  0000 C CNN
+F 2 "" V 7030 8275 50  0000 C CNN
+F 3 "" H 7100 8275 50  0000 C CNN
+	1    7100 8275
+	-1   0    0    1   
+$EndComp
+$Comp
+L R R?
+U 1 1 5994F9A3
+P 6950 8275
+F 0 "R?" V 7000 8425 50  0000 C CNN
+F 1 "100K" V 6950 8275 50  0000 C CNN
+F 2 "" V 6880 8275 50  0000 C CNN
+F 3 "" H 6950 8275 50  0000 C CNN
+	1    6950 8275
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6950 8425 6950 8550
+Wire Wire Line
+	6950 8550 7750 8550
+Wire Wire Line
+	7100 8425 7100 8550
+Connection ~ 7100 8550
+Wire Wire Line
+	7250 8425 7250 8550
+Connection ~ 7250 8550
+Connection ~ 7500 8550
+Wire Wire Line
+	7250 8100 7250 7300
+Connection ~ 7250 7300
+Wire Wire Line
+	7100 8125 7100 7200
+Connection ~ 7100 7200
+Wire Wire Line
+	6950 7100 6950 8125
+Connection ~ 6950 7100
+$Comp
+L C_Small C?
+U 1 1 59956A1E
+P 7750 8425
+F 0 "C?" V 7600 8475 50  0000 L CNN
+F 1 "100nF" H 7400 8425 50  0000 L CNN
+F 2 "" H 7750 8425 50  0000 C CNN
+F 3 "" H 7750 8425 50  0000 C CNN
+	1    7750 8425
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	7750 8550 7750 8525
+Connection ~ 7750 8275
 $EndSCHEMATC

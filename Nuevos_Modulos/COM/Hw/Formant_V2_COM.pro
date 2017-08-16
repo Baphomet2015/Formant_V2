@@ -1,4 +1,4 @@
-update=16/08/2017 10:43:05
+update=16/08/2017 10:48:08
 version=1
 last_client=kicad
 [pcbnew]
@@ -58,16 +58,4 @@ LibName26=opto
 LibName27=atmel
 LibName28=contrib
 LibName29=valves
-LibName30=D:/Cortana/Google Drive/Electronica/KiCad/Librerias_Arduino/arduino_lib-master/arduino
-LibName31=C:/Program Files/KiCad/share/kicad/library/switches
-LibName32=D:/Cortana/Google Drive/Electronica/KiCad/Kicad_Libreria/Baphomet_Libreria
-[schematic_editor]
-version=1
-PageLayoutDescrFile=
-PlotDirectoryName=
-SubpartIdSeparator=0
-SubpartFirstId=65
-NetFmtName=
-SpiceForceRefPrefix=0
-SpiceUseNetNumbers=0
-LabSize=60
+LibName30=D:/Cortana/Google Drive/Electronica/KiCad/Kicad_Libreria/Baphomet_Libreria
