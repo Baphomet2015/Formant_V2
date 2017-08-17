@@ -39,7 +39,7 @@ void getPotenciomentroManual_COM(void)
   int  val;
   byte volumen;
 
-  val= analogRead(IDE_HW_VOL_COM_POT);
+  val = analogRead(IDE_HW_VOL_COM_POT);
   
   volumen = (byte)map(val,0,1023,0,127);
   setPotenciomentro_COM(volumen);
@@ -85,7 +85,7 @@ void setPotenciomentro_COM(byte volumen)
   // COM del Formant  original (ver esquema original
   // del  modulo COM el Formant).
   // -----------------------------------------------
-  volumen = map(volumen,0,127,0,63);
+  volumen = (byte)map(volumen,0,127,0,63);
   
   #ifdef DEBUG_MIDI 
   Serial.print  ("Volumen: " );

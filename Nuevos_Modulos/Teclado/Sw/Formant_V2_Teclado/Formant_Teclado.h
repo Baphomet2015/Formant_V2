@@ -41,8 +41,8 @@
 
 #define IDE_HW_PIN_LED_TECLA_ON   3   // Pin para indicar "tecla pulsada"
 
-#define IDE_HW_CANAL_ID_0         7   // Pines para asignar el canal por el que se reciben los mensajes
-#define IDE_HW_CANAL_ID_1         8
+#define IDE_HW_CANAL_ID_0         7   // Pines para asignar mediante switches el
+#define IDE_HW_CANAL_ID_1         8   // canal por el que se reciben los mensajes
 #define IDE_HW_CANAL_ID_2         9
 #define IDE_HW_CANAL_ID_3        10
 
@@ -52,9 +52,8 @@
                                       // modo manual
 
 #define IDE_HW_PIN_VOLCOM_DATA   A1   // Pines para controlar el potenciometro digital de volumen del 
-#define IDE_HW_PIN_VOLCOM_RESET  A2   // modulo COM
+#define IDE_HW_PIN_VOLCOM_RESET  A2   // modulo COM, no quedan digitales libres asi que se usan estos...
 #define IDE_HW_PIN_VOLCOM_CLOCK  A3
-
 
 #define IDE_STR_VERSION          "Formant V2 Controlador MIDI V1.0, modo TEST"
 #define IDE_STR_MSG_01           "Esperando mensajes MIDI..."
@@ -62,9 +61,8 @@
 #define IDE_STR_MSG_03           "Canal MIDI asignado: "
 #define IDE_STR_MSG_04           "La senal GATE y el LED de Tecla Pulsada se estan generando automaticamente..."
 
-
-
-#define IDE_PAUSA_TEST           500 // Pausa en modo TEST, 500 milisegundos
+#define IDE_PAUSA_TEST           500  // Pausa en modo TEST, 500 milisegundos para generar las señales de 
+                                      // GATE y LED de tecla pulsada
 
 #define IDE_MIN_TECLA_ID         0    // Codigo MIDI de la tecla mas baja que se reconoce
 #define IDE_MAX_TECLA_ID         49   // Codigo MIDI de la tecla mas alta que se reconoce
