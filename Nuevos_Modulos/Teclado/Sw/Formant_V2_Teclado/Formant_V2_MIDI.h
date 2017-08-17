@@ -63,6 +63,7 @@
 // ---------------------------------------------------------
 
 #define MIDI_MSG_C_TECLAS_OFF       0x7B
+#define MIDI_MSG_C_VOLUMEN          0x07
 
 
 

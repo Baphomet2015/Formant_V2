@@ -16,6 +16,7 @@
 // ---------------------------------------------------------
 
 #include <Arduino.h>
+#include <EEPROM.h>
 #include <stdlib.h>
 #include "Formant_V2_MIDI.h"
 #include "Formant_Teclado.h"
@@ -76,6 +77,11 @@ void setup()
    pinMode(IDE_HW_CANAL_ID_3,INPUT);
    
    pinMode(IDE_HW_PIN_TEST,INPUT);
+          
+   analogWrite(IDE_HW_PIN_VOLCOM_DATA ,0);
+   analogWrite(IDE_HW_PIN_VOLCOM_RESET,0);
+   analogWrite(IDE_HW_PIN_VOLCOM_CLOCK,0);
+
      
    set_CodigoTecla(0);
    set_GATE(LOW);
@@ -111,60 +117,89 @@ void setup()
 
 void loop()
 {
-  int resultado;
 
-  
-  
-  resultado = c_MIDI.get_msg_MIDI(false);
-  
-  if ( resultado==MIDI_RET_OK ) 
-     { // ------------------------------------------------------------
-       //
-       // ------------------------------------------------------------
+  // ------------------------------------------------------------
+  //
+  // Mantiene activas funciones que no tienen que ver con el MIDI
+  //
+  // . getPotenciomentroManual_COM()
+  //   Potenciometro  de  control  manual del volumen general del 
+  //   Formant V2
+  // .
+  // .
+  // .
+  // .
+  // 
+  // ------------------------------------------------------------
+  getPotenciomentroManual_COM();
+    
+    
+    
+  // ------------------------------------------------------------
+  //
+  // Implementacion del manejador de mensajes MIDI
+  //
+  // ------------------------------------------------------------
    
-       if ( c_MIDI.get_Channel()==canalID )
-          { // -------------------------------------------------------
-            // Es un mensaje para este receptor
-            // -------------------------------------------------------
-                        
-            switch( c_MIDI.get_Type() )
-                  { // -----------------------------------------------
-                    // Determina el tipo de mensaje
-                    // -----------------------------------------------
+  if ( (c_MIDI.get_msg_MIDI(false)==MIDI_RET_OK) && (c_MIDI.get_Channel()==canalID) )  
+     { // ------------------------------------------------------------
+       // Se ha recibido informacion y va dirigida a este receptor
+       // ------------------------------------------------------------
+       switch( c_MIDI.get_Type() )
+             { // -----------------------------------------------
+               //
+               //             EJECUTA EL MENSAJE
+               //
+               // -----------------------------------------------
 
-                    case ( MIDI_MSG_C_NOTE_ON ):
-                         { // -----------------------------------------------
-                           //                 PULSAR TECLA
-                           // -----------------------------------------------
-                           msg_MIDI_Tecla_ON();
-                           break; 
-                         }
+               case ( MIDI_MSG_C_NOTE_ON ):
+                    { // -----------------------------------------------
+                      //                 PULSAR TECLA
+                      // -----------------------------------------------
+                      msg_MIDI_Tecla_ON();
+                      break; 
+                    }
 
-                    case ( MIDI_MSG_C_NOTE_OFF ):
-                         { // -----------------------------------------------
-                           //            DEJAR DE PULSAR TECLA
-                           // -----------------------------------------------
-                           msg_MIDI_Tecla_OFF();
-                           break; 
-                         }
+               case ( MIDI_MSG_C_NOTE_OFF ):
+                    { // -----------------------------------------------
+                      //            DEJAR DE PULSAR TECLA
+                      // -----------------------------------------------
+                      msg_MIDI_Tecla_OFF();
+                      break; 
+                    }
                          
-                    case ( MIDI_MSG_S_RESET ):
-                         { // -----------------------------------------------
-                           //            RESET DE SISTEMA
-                           // -----------------------------------------------
-                           msg_MIDI_Reset();
-                           break; 
-                         }    
+               case ( MIDI_MSG_S_RESET ):
+                    { // -----------------------------------------------
+                      //            RESET DE SISTEMA
+                      // -----------------------------------------------
+                      msg_MIDI_Reset();
+                      break; 
+                    }    
                         
-                    case ( MIDI_MSG_C_CTRL_CHG ):
-                         { // -----------------------------------------------
-                           //            CAMBIO DE CONTROL
-                           // -----------------------------------------------
-                           msg_MIDI_Ctrl_TeclasOFF();
-                           break; 
-                         }    
-                  }
-          }
+               case ( MIDI_MSG_C_CTRL_CHG ):
+                    { // -----------------------------------------------
+                      //            CAMBIO DE CONTROL
+                      // -----------------------------------------------
+                      switch( c_MIDI.get_Data_01() )
+                            {
+                              case( MIDI_MSG_C_TECLAS_OFF ):
+                                  { // -----------------------------------------------
+                                    // OFF de todas las Teclas
+                                    // -----------------------------------------------
+                                    msg_MIDI_Ctrl_TeclasOFF();
+                                    break;
+                                  }
+                              case( MIDI_MSG_C_VOLUMEN ):
+                                  { // -----------------------------------------------
+                                    // Volumen general del Formant  (Modulo COM)
+                                    // -----------------------------------------------
+                                     msg_MIDI_Ctrl_Volumen();
+                                     break;
+                                  }
+                            }
+                      break; 
+                    }    
+             }
      }
  
 }
@@ -293,15 +328,24 @@ void msg_MIDI_Reset(void)
 
 void msg_MIDI_Ctrl_TeclasOFF(void)
 {
-  if ( c_MIDI.get_Data_01()==MIDI_MSG_C_TECLAS_OFF )
-     { // -----------------------------------------------
-       // OFF de todas las Teclas
-       // -----------------------------------------------
-       iniTabTeclasEstado();
-       activarTeclaPulsada();
-     }
+  iniTabTeclasEstado();
+  activarTeclaPulsada();
 }
 
+
+
+// ------------------------------------------------------------
+//
+// void msg_MIDI_Ctrl_Volumen(void)
+// Implementa el mensaje de Control de cambio --> Volumen
+// general
+//
+// ------------------------------------------------------------
+
+void msg_MIDI_Ctrl_Volumen(void)
+{
+  setPotenciomentro_COM(c_MIDI.get_Data_02());
+}
 
 
 
@@ -518,6 +562,7 @@ void modoTest(void)
               Serial.print(c_MIDI.get_Data_02(),DEC);
               Serial.println();
               Serial.println();
+              
            }
         else
             { // ------------------------------------------------------------

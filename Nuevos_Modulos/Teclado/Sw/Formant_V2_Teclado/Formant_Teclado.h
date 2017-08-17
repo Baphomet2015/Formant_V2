@@ -24,7 +24,7 @@
 // DESCOMENTAR este define para compilar trazas de depuracion
 // ---------------------------------------------------------
 
-// #define DEBUG_MIDI  1
+#define DEBUG_MIDI  1
 
 
 // ---------------------------------------------------------
@@ -33,9 +33,9 @@
 //
 // ---------------------------------------------------------
 
-#define IDE_HW_PIN_CLOCK          5   // Pin para generar el codigo de control ( CLOCK )
-#define IDE_HW_PIN_DATA           4   // Pin para generar el codigo de control ( DATA  )
-#define IDE_HW_PIN_LATCH          6   // Pin para generar el codigo de control ( LATCH )
+#define IDE_HW_PIN_CLOCK          5   // Pin para generar el codigo de control del teclado ( CLOCK )
+#define IDE_HW_PIN_DATA           4   // Pin para generar el codigo de control del teclado ( DATA  )
+#define IDE_HW_PIN_LATCH          6   // Pin para generar el codigo de control del teclado ( LATCH )
 
 #define IDE_HW_PIN_GATE           2   // Pin para generar la señal GATE
 
@@ -48,6 +48,12 @@
 
 #define IDE_HW_PIN_TEST          11   // Pulsador para entrar en el modo TEST
 
+#define IDE_HW_VOL_COM_POT       A0   // Pin para leer el potenciometro de volumen del modulo COM,en
+                                      // modo manual
+
+#define IDE_HW_PIN_VOLCOM_DATA   A1   // Pines para controlar el potenciometro digital de volumen del 
+#define IDE_HW_PIN_VOLCOM_RESET  A2   // modulo COM
+#define IDE_HW_PIN_VOLCOM_CLOCK  A3
 
 
 #define IDE_STR_VERSION          "Formant V2 Controlador MIDI V1.0, modo TEST"
