@@ -64,6 +64,8 @@ void getPotenciomentroManual_COM(void)
 
 void setPotenciomentro_COM(byte volumen)
 {
+  byte val;
+  
   // -----------------------------------------------
   //
   //         Valor a cargar en el DS1801
@@ -85,19 +87,21 @@ void setPotenciomentro_COM(byte volumen)
   // COM del Formant  original (ver esquema original
   // del  modulo COM el Formant).
   // -----------------------------------------------
-  volumen = (byte)map(volumen,0,127,0,63);
+  val = (byte)map(volumen,0,127,0,63);
   
   #ifdef DEBUG_MIDI 
   Serial.print  ("Volumen: " );
-  Serial.println(volumen,BIN);
+  Serial.print  (volumen,DEC);
+  Serial.print  (" -> " );
+  Serial.println(val,DEC );
   #endif
   
   analogWrite(IDE_HW_PIN_VOLCOM_CLOCK,0);                // Señal de reloj a nivel bajo
   analogWrite(IDE_HW_PIN_VOLCOM_RESET,255);              // Señal de reloj a nivel alto
   delayMicroseconds(5);
   
-  shiftOut(IDE_HW_PIN_VOLCOM_DATA,IDE_HW_PIN_VOLCOM_CLOCK, MSBFIRST, volumen); // Potenciometro 1
-  shiftOut(IDE_HW_PIN_VOLCOM_DATA,IDE_HW_PIN_VOLCOM_CLOCK, MSBFIRST, volumen); // Potenciometro 0
+  shiftOut(IDE_HW_PIN_VOLCOM_DATA,IDE_HW_PIN_VOLCOM_CLOCK, LSBFIRST, val); // Potenciometro 1
+  shiftOut(IDE_HW_PIN_VOLCOM_DATA,IDE_HW_PIN_VOLCOM_CLOCK, LSBFIRST, val); // Potenciometro 0
 
   analogWrite(IDE_HW_PIN_VOLCOM_RESET,0);                // Señal de reloj a nivel bajo al salir debe quedar asi
   

@@ -2411,59 +2411,7 @@ Text GLabel 6900 7100 0    60   Output ~ 0
 COM_VOL_CLOCK
 Wire Wire Line
 	6900 7100 7950 7100
-$Comp
-L R R?
-U 1 1 5994F6D2
-P 7250 8275
-F 0 "R?" V 7300 8425 50  0000 C CNN
-F 1 "100K" V 7250 8275 50  0000 C CNN
-F 2 "" V 7180 8275 50  0000 C CNN
-F 3 "" H 7250 8275 50  0000 C CNN
-	1    7250 8275
-	-1   0    0    1   
-$EndComp
-$Comp
-L R R?
-U 1 1 5994F842
-P 7100 8275
-F 0 "R?" V 7150 8425 50  0000 C CNN
-F 1 "100K" V 7100 8275 50  0000 C CNN
-F 2 "" V 7030 8275 50  0000 C CNN
-F 3 "" H 7100 8275 50  0000 C CNN
-	1    7100 8275
-	-1   0    0    1   
-$EndComp
-$Comp
-L R R?
-U 1 1 5994F9A3
-P 6950 8275
-F 0 "R?" V 7000 8425 50  0000 C CNN
-F 1 "100K" V 6950 8275 50  0000 C CNN
-F 2 "" V 6880 8275 50  0000 C CNN
-F 3 "" H 6950 8275 50  0000 C CNN
-	1    6950 8275
-	-1   0    0    1   
-$EndComp
-Wire Wire Line
-	6950 8425 6950 8550
-Wire Wire Line
-	6950 8550 7750 8550
-Wire Wire Line
-	7100 8425 7100 8550
-Connection ~ 7100 8550
-Wire Wire Line
-	7250 8425 7250 8550
-Connection ~ 7250 8550
 Connection ~ 7500 8550
-Wire Wire Line
-	7250 8100 7250 7300
-Connection ~ 7250 7300
-Wire Wire Line
-	7100 8125 7100 7200
-Connection ~ 7100 7200
-Wire Wire Line
-	6950 7100 6950 8125
-Connection ~ 6950 7100
 $Comp
 L C_Small C?
 U 1 1 59956A1E
@@ -2478,4 +2426,6 @@ $EndComp
 Wire Wire Line
 	7750 8550 7750 8525
 Connection ~ 7750 8275
+Wire Wire Line
+	7500 8550 7750 8550
 $EndSCHEMATC

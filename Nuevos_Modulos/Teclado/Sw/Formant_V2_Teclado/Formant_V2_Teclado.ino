@@ -131,7 +131,7 @@ void loop()
   // .
   // 
   // ------------------------------------------------------------
-  getPotenciomentroManual_COM();
+  //getPotenciomentroManual_COM();
     
     
     
