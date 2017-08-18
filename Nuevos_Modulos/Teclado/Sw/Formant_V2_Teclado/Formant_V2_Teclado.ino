@@ -40,9 +40,9 @@ byte         modoF;                                // Modo de funcionamniento: T
 byte         tab_TeclasEstado[IDE_MAX_TECLA_ID+1]; // Tabla con el estado de cada  tecla , esta  tabla  se utiliza 
                                                    // para controlar el estado de cada tecla (pulsada o sin pulsar)
                                                    // Cada posicion en esta  tabla  alamcena el estado de la tecla
-                                                   // correspondiente, por ejemplo el estado de la tecla MIDI con
+                                                   // correspondiente, por ejemplo el estado de la  tecla MIDI con
                                                    // el codigo 27 se almacena en tab_TeclasEstado[27] etc
-                                                   // Los codigo MIDI de las teclas reconocidas se fijan con los 
+                                                   // Los codigos MIDI de las teclas reconocidas se  fijan con los 
                                                    // defines:
                                                    //  #define IDE_MIN_TECLA_ID codigo MIDI de la tecla mas baja
                                                    //  #define IDE_MAX_TECLA_ID codigo MIDI de la tecla mas alta
@@ -50,7 +50,7 @@ byte         tab_TeclasEstado[IDE_MAX_TECLA_ID+1]; // Tabla con el estado de cad
                                                    // IDE_MAX_TECLA_ID incluido
                                                    // ------------------------------------------------------------
 
-
+byte volumenManualGeneral;                         // valor del potenciometro que fija el volumen general del Formant, en modo manual
 
 
 
@@ -82,6 +82,7 @@ void setup()
    analogWrite(IDE_HW_PIN_VOLCOM_RESET,0);
    analogWrite(IDE_HW_PIN_VOLCOM_CLOCK,0);
 
+   volumenManualGeneral = 0;
      
    set_CodigoTecla(0);
    set_GATE(LOW);
@@ -131,7 +132,7 @@ void loop()
   // .
   // 
   // ------------------------------------------------------------
-  //getPotenciomentroManual_COM();
+  getPotenciomentroManual_COM();
     
     
     

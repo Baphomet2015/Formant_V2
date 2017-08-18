@@ -39,10 +39,16 @@ void getPotenciomentroManual_COM(void)
   int  val;
   byte volumen;
 
-  val = analogRead(IDE_HW_VOL_COM_POT);
-  
+  val     = analogRead(IDE_HW_VOL_COM_POT);
   volumen = (byte)map(val,0,1023,0,127);
-  setPotenciomentro_COM(volumen);
+  
+  if ( volumen!=volumenManualGeneral )
+     { // ---------------------------------------------------------
+       // Actualiza el volumen
+       // ---------------------------------------------------------
+       volumenManualGeneral = volumen;
+       setPotenciomentro_COM(volumen);
+     }
 
 }
 
