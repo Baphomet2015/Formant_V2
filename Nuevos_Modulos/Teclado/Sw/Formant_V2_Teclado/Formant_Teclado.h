@@ -24,7 +24,7 @@
 // DESCOMENTAR este define para compilar trazas de depuracion
 // ---------------------------------------------------------
 
-#define DEBUG_MIDI  1
+//#define DEBUG_MIDI  1
 
 
 // ---------------------------------------------------------
