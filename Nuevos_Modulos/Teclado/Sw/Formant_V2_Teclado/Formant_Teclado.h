@@ -21,7 +21,9 @@
 
 
 // ---------------------------------------------------------
+//                        ATENCIÓN:
 // DESCOMENTAR este define para compilar trazas de depuracion
+// que se envian por el pueerto serie
 // ---------------------------------------------------------
 
 //#define DEBUG_MIDI  1

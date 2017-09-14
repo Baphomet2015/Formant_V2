@@ -39,9 +39,13 @@ byte         modoF;                                // Modo de funcionamniento: T
                                                    // ------------------------------------------------------------
 byte         tab_TeclasEstado[IDE_MAX_TECLA_ID+1]; // Tabla con el estado de cada  tecla , esta  tabla  se utiliza 
                                                    // para controlar el estado de cada tecla (pulsada o sin pulsar)
-                                                   // Cada posicion en esta  tabla  alamcena el estado de la tecla
+                                                   // Cada posicion en esta  tabla  almacena el estado de la tecla
                                                    // correspondiente, por ejemplo el estado de la  tecla MIDI con
                                                    // el codigo 27 se almacena en tab_TeclasEstado[27] etc
+                                                   // Estados posibles:
+                                                   // . IDE_TECLA_ESTADO_OFF, Tecla SIN pulsar
+                                                   // . IDE_TECLA_ESTADO_ON,  Tecla pulsada
+                                                   //
                                                    // Los codigos MIDI de las teclas reconocidas se  fijan con los 
                                                    // defines:
                                                    //  #define IDE_MIN_TECLA_ID codigo MIDI de la tecla mas baja
