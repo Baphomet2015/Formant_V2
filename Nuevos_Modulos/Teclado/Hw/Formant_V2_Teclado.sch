@@ -3510,4 +3510,6 @@ F 3 "" H 7300 7850 50  0000 C CNN
 $EndComp
 Wire Wire Line
 	7300 7850 7300 7925
+Text Notes 775  2275 0    60   ~ 12
+ADJ_P6
 $EndSCHEMATC
