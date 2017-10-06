@@ -1,0 +1,3 @@
+
+Fichero vacio para obligar a GIT a guardar este directorio inicialmente vacio.
+cuando este directorio contenga información, se debe BORRAR este fichero
