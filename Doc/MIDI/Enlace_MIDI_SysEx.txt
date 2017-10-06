@@ -1,0 +1,7 @@
+
+
+
+
+Pagina donde se listan los IDs de los fabricantes de instrumentos MIDI, este ID se utiliza en el comando MIDI SysEx
+
+https://www.midi.org/specifications/item/manufacturer-id-numbers
