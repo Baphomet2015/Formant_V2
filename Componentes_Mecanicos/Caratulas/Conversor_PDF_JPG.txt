@@ -1,0 +1,7 @@
+
+Conversor Online PDF --> JPG
+Permite convertir online ficheros .PDF a .JPG
+la versión Free solo permite realizar 2 conversiones en una hora, después hay que esperar
+
+
+https://smallpdf.com/es/pdf-a-jpg

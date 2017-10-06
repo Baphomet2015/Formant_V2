@@ -1,0 +1,11 @@
+
+
+Los ficheros de extensión .FCStd son ficheros CAD realizados con FreeCad:
+
+https://www.freecadweb.org
+
+
+Los datos relativos a los Racks de 19" utilizados (1 de 3U y 1 de 6U) se encuentran en las listas de componentes del
+Formant V2, que se encuentran recogidas en el documento,
+
+Doc->Formant_V2.docx
