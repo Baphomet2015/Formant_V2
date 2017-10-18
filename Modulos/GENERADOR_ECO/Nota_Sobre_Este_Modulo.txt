@@ -1,0 +1,5 @@
+
+Para crear el generador de eco  se debe utilizar el Arduino DUE
+
+http://www.frenki.net/2013/10/fast-analogread-with-arduino-due/
+http://www.djerickson.com/arduino/due_adc.html
