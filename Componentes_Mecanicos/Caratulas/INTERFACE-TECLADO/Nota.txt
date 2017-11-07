@@ -1,4 +1,0 @@
-
-Nota:
-La caratula de la interfaz de teclado debe diseñarse teniendo encuenta que va alojada en la parte inferior del Mueble
-y ese espacio es de 2U.
