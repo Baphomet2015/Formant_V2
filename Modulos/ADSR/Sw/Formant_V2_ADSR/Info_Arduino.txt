@@ -1,0 +1,15 @@
+
+
+Los ficheros de extensión,
+
+ .h
+ .ino
+ .lib
+
+Ha sido realizados con el software Open Source de desarrollo Software/Hardware de la plataforma Arduino,
+
+
+https://www.arduino.cc/
+
+
+Se ha utilizado la versión 1.6.4

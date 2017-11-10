@@ -1,0 +1,13 @@
+
+
+Los ficheros de extensión,
+
+ .pro
+ .sch
+ .lib
+ .bak
+ .kicad-pcb
+
+Han sido realizados con el software Open Source de diseño de circuitos Kicad,
+
+http://kicad-pcb.org/
