@@ -1,0 +1,63 @@
+if ( digitalRead(IDE_HW_PIN_GATE)==HIGH )
+     { // ------------------------------------------------------------
+       // Senal GATE activa
+       // ------------------------------------------------------------
+       flg_GATE = IDE_GATE_ON;
+
+       if ( flg_estado_ADSR_1==IDE_ADSR_OK )
+          { // ------------------------------------------------------------
+            // Inicia el ciclo de generacion de la envolvente en ADSR 1
+            // ------------------------------------------------------------
+            t = millis();
+            flg_estado_ADSR_1 = IDE_ADSR_A;
+          }
+          
+       if ( flg_estado_ADSR_2==IDE_ADSR_OK )
+          { // ------------------------------------------------------------
+            // Inicia el ciclo de generacion de la envolvente en ADSR 2
+            // ------------------------------------------------------------
+            flg_estado_ADSR_2 = IDE_ADSR_A;
+          }
+     }
+  else
+     { 
+       if ( flg_GATE==IDE_GATE_ON )
+          { // ------------------------------------------------------------
+            // La senal GATE se estaba recibiendo y se deja de recibir, 
+            // es decir estaba pulsando una tecla y deja de hacerlo
+            // ------------------------------------------------------------
+            flg_GATE          = IDE_GATE_OFF;
+            flg_estado_ADSR_1 = IDE_ADSR_RESET;
+            flg_estado_ADSR_2 = IDE_ADSR_RESET;
+          }
+     }  
+
+
+
+
+
+
+
+
+
+
+  if ( flg_GATE()==IDE_GATE_ON )
+     { // ------------------------------------------------------------
+       //
+       // ------------------------------------------------------------
+       switch(flg_estado_ADSR )
+             {
+               
+               
+               
+               
+             }
+     }
+  else
+     { // ------------------------------------------------------------
+       //
+       // ------------------------------------------------------------
+
+  
+  
+     }
