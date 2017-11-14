@@ -67,6 +67,8 @@ void ARDUINO_ADSR::inicializar(void)
   vOut        = 0;
   vSustain    = 0;
   flg_Sustain = false;
+  
+  
 }
 
 
@@ -86,6 +88,8 @@ void ARDUINO_ADSR::generar(byte estado_GATE)
 {
   vOut     = analogRead(adsr_OUT);
   vSustain = analogRead(adsr_S);
+  
+  
   flg_GATE = estado_GATE;
  
   switch ( flg_Estado )
@@ -161,7 +165,7 @@ void ARDUINO_ADSR::genera_ATTACK(void)
       
        if ( vOut>=vSustain )
           {
-            flg_Sustain = true;   
+            flg_Sustain = true;          
           }
              
        if ( vOut>=IDE_ADSR_FIN_ATTACK )
@@ -169,7 +173,12 @@ void ARDUINO_ADSR::genera_ATTACK(void)
             // Alcanzado el nivel de ATTACK
             // Finaliza el ATTACK y activa DECAY
             // ------------------------------------------------------------
-      
+            #ifdef DEBUG_ADSR
+            Serial.println("OUT: ");
+            Serial.print(vOut);
+            Serial.print(" SUSTAIN: ");
+            Serial.println(vSustain);
+            #endif
           }
        else   
           {
@@ -206,7 +215,6 @@ void ARDUINO_ADSR::genera_DECAY(void)
        // Se mantiene la tecla pulsada durante el 
        // periodo de DECAY
        // ---------------------------------------------
-   
        if ( (flg_Sustain==true) && (vOut<=vSustain) )
           { // ------------------------------------------------------------
             // Alcanzado el nivel de SUSTAIN
@@ -215,8 +223,7 @@ void ARDUINO_ADSR::genera_DECAY(void)
             digitalWrite(adsr_D,LOW);
             flg_Estado = IDE_ADSR_S;
          }
-
-     }
+    }
   else
      { // ---------------------------------------------
        // Deja de pulsar tecla  durante el  periodo  de

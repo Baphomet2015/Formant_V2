@@ -30,7 +30,7 @@
 #define IDE_ADSR_S                3    // Indica que se esta generando la parte SUSTAIN en la envolvente de salida
 #define IDE_ADSR_R                4    // Indica que se esta generando la parte RELEASE en la envolvente de salida
 
-#define IDE_ADSR_FIN_ATTACK     815    // Valor  para detectar el fin del ciclo de ATTACK en una envolvente
+#define IDE_ADSR_FIN_ATTACK     950    // Valor  para detectar el fin del ciclo de ATTACK en una envolvente
 
 
 
