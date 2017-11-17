@@ -25,29 +25,39 @@
 
 // ------------------------------------------------------------
 //
-// void ARDUINO_ADSR::begin(byte p_adsr_A,byte p_adsr_D,byte p_adsr_S,byte p_adsr_R,byte p_adsr_OUT)
+// void ARDUINO_ADSR::begin( byte p_adsr_A    ,
+//                           byte p_adsr_D    ,
+//                           byte p_adsr_S    ,
+//                           byte p_adsr_R    ,
+//                           byte p_adsr_OUT  ,
+//                           byte p_modo
+//                         )
 // Genera la envolvente ADSR en el modulo indicado, esta funcion 
 // se debe llamar continuamente MIENTRAS se recibe la seÃ±al  de
 // GATE, que equivale a tecla pulsada
 //
 // ------------------------------------------------------------
 
-void ARDUINO_ADSR::begin(byte p_adsr_A,byte p_adsr_D,byte p_adsr_S,byte p_adsr_R,byte p_adsr_OUT)
+void ARDUINO_ADSR::begin(byte p_adsr_A,byte p_adsr_D,byte p_adsr_S,byte p_adsr_R,byte p_adsr_OUT,byte p_modo)
 {
-  adsr_A   = p_adsr_A;
-  adsr_D   = p_adsr_D;
-  adsr_S   = p_adsr_S;
-  adsr_R   = p_adsr_R;
-  adsr_OUT = p_adsr_OUT;
+  adsr_A    = p_adsr_A;
+  adsr_D    = p_adsr_D;
+  adsr_S    = p_adsr_S;
+  adsr_R    = p_adsr_R;
+  adsr_OUT  = p_adsr_OUT;
+  adsr_modo = p_modo;
   
-  pinMode(adsr_A  ,OUTPUT); // Control del ATTACK
-  pinMode(adsr_D  ,OUTPUT); // Control del DECAY 
-  pinMode(adsr_S  ,INPUT);  // Control del SUSTAIN (pin analogico)
-  pinMode(adsr_R  ,OUTPUT); // Control del RELEASE
-  pinMode(adsr_OUT,INPUT);  // Para medir la tension de salida del ADSR (pin analogico)
+  pinMode(adsr_A   ,OUTPUT); // Control del ATTACK
+  pinMode(adsr_D   ,OUTPUT); // Control del DECAY 
+  pinMode(adsr_S   ,INPUT);  // Control del SUSTAIN (pin analogico)
+  pinMode(adsr_R   ,OUTPUT); // Control del RELEASE
+  pinMode(adsr_OUT ,INPUT);  // Para medir la tension de salida del ADSR (pin analogico)
+  pinMode(adsr_modo,INPUT);  // Para leer el modo de funcionamiento seleccionado
   
-  flg_Estado = IDE_ADSR_OK;
+  modo       = get_Modo();
   inicializar();
+  flg_Estado = IDE_ADSR_OK;
+  
 }
 
 
@@ -67,14 +77,8 @@ void ARDUINO_ADSR::inicializar(void)
   vOut        = 0;
   vSustain    = 0;
   flg_Sustain = false;
-  
-  
+  flg_Inicio  = false;
 }
-
-
-
-
-
 
 
 
@@ -86,12 +90,51 @@ void ARDUINO_ADSR::inicializar(void)
 
 void ARDUINO_ADSR::generar(byte estado_GATE)
 {
-  vOut     = analogRead(adsr_OUT);
-  vSustain = analogRead(adsr_S);
+  byte m;
+
+  m = get_Modo();
+  if ( modo!=m )
+     { // ----------------------------------------------
+       // Ha cambiado el modo de funcionamiento
+       // ----------------------------------------------
+       modo = m;
+       inicializar();
+       flg_Estado = IDE_ADSR_OK;
+     }
   
-  
-  flg_GATE = estado_GATE;
+  if ( (flg_Inicio==false) && (flg_GATE==IDE_GATE_ON) )    
+     { // ----------------------------------------------
+       // Se dispara el ADSR
+       // ----------------------------------------------
+       flg_Inicio = true;
+     }
+
+  if ( flg_Inicio==true) 
+     { // ----------------------------------------------
+       // Generar envolvente
+       // ----------------------------------------------
+       vOut       = analogRead(adsr_OUT);
+       vSustain   = analogRead(adsr_S);
  
+       if ( modo==IDE_MODO_ADSR ) { flg_GATE = estado_GATE; }
+       else                       { flg_GATE = IDE_GATE_ON; }  
+       
+       gen_Envolvente(); 
+     }
+  
+}
+
+
+
+// ------------------------------------------------------------
+//
+// void ARDUINO_ADSR::gen_Envolvente(void)
+//
+// ------------------------------------------------------------
+
+void ARDUINO_ADSR::gen_Envolvente(void)
+{
+  
   switch ( flg_Estado )
          {
            case ( IDE_ADSR_OK ):
@@ -139,7 +182,19 @@ void ARDUINO_ADSR::generar(byte estado_GATE)
                   break;
                 }
         }
+}
 
+
+
+// ------------------------------------------------------------
+//
+// byte ARDUINO_ADSR::get_Modo(void)
+//
+// ------------------------------------------------------------
+
+byte ARDUINO_ADSR::get_Modo(void)
+{
+  return( digitalRead(adsr_modo) );
 }
 
 
@@ -186,7 +241,7 @@ void ARDUINO_ADSR::genera_ATTACK(void)
             flg_Fin_ATTACK = false;
           }
      }     
-  
+       
   if ( flg_Fin_ATTACK==true )
      { // ------------------------------------------------------------
        // Fin del periodo de ATTACK       
@@ -254,9 +309,6 @@ void ARDUINO_ADSR::genera_SUSTAIN(void)
        digitalWrite(adsr_R,HIGH);
        flg_Estado = IDE_ADSR_OK;   
      }
-  
-  
-  
   
 }
 

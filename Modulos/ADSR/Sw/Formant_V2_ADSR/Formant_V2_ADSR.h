@@ -41,12 +41,15 @@
 #define IDE_HW_PIN_ADSR_1_R       4   // Pin para generar la parte RELEASE en el ADSR 1 DIGITAL
 #define IDE_HW_PIN_ADSR_1_OUT    A0   // Pin para leer la tension de salida del ADSR
 #define IDE_HW_PIN_ADSR_1_S      A1   // Pin para generar la parte SUSTAIN en el ADSR 1 
+#define IDE_HW_PIN_ADSR_1_MODO   11   // Para seleccionar el modo AD/ADSR en el ASDSR 1
+
 
 #define IDE_HW_PIN_ADSR_2_A       5   // Pin para generar la parte ATTACK  en el ADS 1 DIGITAL
 #define IDE_HW_PIN_ADSR_2_D       6   // Pin para generar la parte DECAY   en el ADSR 1 DIGITAL
 #define IDE_HW_PIN_ADSR_2_R       7   // Pin para generar la parte RELEASE en el ADSR 1 DIGITAL
 #define IDE_HW_PIN_ADSR_2_OUT    A2   // Pin para leer la tension de salida del ADSR
 #define IDE_HW_PIN_ADSR_2_S      A3   // Pin para generar la parte SUSTAIN en el ADSR 1 ANALOG
+#define IDE_HW_PIN_ADSR_2_MODO   10   // Para seleccionar el modo AD/ADSR en el ASDSR 2
 
 
 #define IDE_GATE_ON               1    // SeÃ±al GATE activa, se esta pulsando una tecla

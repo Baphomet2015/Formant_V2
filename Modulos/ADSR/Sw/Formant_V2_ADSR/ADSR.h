@@ -32,8 +32,8 @@
 
 #define IDE_ADSR_FIN_ATTACK     950    // Valor  para detectar el fin del ciclo de ATTACK en una envolvente
 
-
-
+#define IDE_MODO_ADSR            LOW   // Seleccionado modo ADSR, coincide con el nivel leido en el pin de entrada correspondiente   
+#define IDE_MODO_AD              HIGH  // Seleccionado modo AD, coincide con el nivel leido en el pin de entrada correspondiente
 
 
 // ---------------------------------------------------------
@@ -49,7 +49,7 @@ class ARDUINO_ADSR
    
    ARDUINO_ADSR() {}
 
-   void begin       (byte p_adsr_A,byte p_adsr_D,byte p_adsr_S,byte p_adsr_R,byte p_adsr_OUT);
+   void begin       (byte p_adsr_A,byte p_adsr_D,byte p_adsr_S,byte p_adsr_R,byte p_adsr_OUT,byte p_modo);
    void generar     (byte estado_GATE);
    void inicializar (void);
    
@@ -66,15 +66,22 @@ class ARDUINO_ADSR
                              // . IDE_ADSR_R
   byte flg_GATE;
   
-  int vOut;                  // Tension medida en la Salida del ADSR 
-  int vSustain;              // Tension medida en el potenciometro de SUSTAIN
-
+  byte flg_Inicio;           // True Se ha iniciado la generacion de ADSR, False NO se ha iniciado
+  
+  int  vOut;                 // Tension medida en la Salida del ADSR 
+  int  vSustain;             // Tension medida en el potenciometro de SUSTAIN
+  byte modo;                 // Modo de funcionamiento
+  
   byte adsr_A;               // Pin para generar la parte ATTACK  
   byte adsr_D;               // Pin para generar la parte DECAY   
   byte adsr_S;               // Pin para generar la parte SUSTAIN 
   byte adsr_R;               // Pin para generar la parte RELEASE 
   byte adsr_OUT;             // Pin para leer la tension de salida del ADSR
+  byte adsr_modo;            // Pin para leer el modo de funcionanmiento IDE_MODO_AD , IDE_MODO_ADSR
   
+  byte get_Modo(void);
+  
+  void gen_Envolvente(void);
   
   void genera_ATTACK  (void);
   void genera_DECAY   (void);

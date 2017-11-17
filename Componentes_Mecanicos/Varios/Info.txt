@@ -1,0 +1,6 @@
+
+
+Los ficheros de extensión .FCStd son ficheros CAD realizados con FreeCad:
+
+https://www.freecadweb.org
+

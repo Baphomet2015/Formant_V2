@@ -49,18 +49,20 @@ void setup()
 {
    pinMode(IDE_HW_PIN_GATE,INPUT);
 
-   adsr_1.begin( IDE_HW_PIN_ADSR_1_A  ,
-                 IDE_HW_PIN_ADSR_1_D  ,
-                 IDE_HW_PIN_ADSR_1_S  ,
-                 IDE_HW_PIN_ADSR_1_R  , 
-                 IDE_HW_PIN_ADSR_1_OUT
+   adsr_1.begin( IDE_HW_PIN_ADSR_1_A   ,
+                 IDE_HW_PIN_ADSR_1_D   , 
+                 IDE_HW_PIN_ADSR_1_S   ,
+                 IDE_HW_PIN_ADSR_1_R   , 
+                 IDE_HW_PIN_ADSR_1_OUT ,
+                 IDE_HW_PIN_ADSR_1_MODO
                 );
 
-   adsr_2.begin( IDE_HW_PIN_ADSR_2_A  ,
-                 IDE_HW_PIN_ADSR_2_D  ,
-                 IDE_HW_PIN_ADSR_2_S  ,
-                 IDE_HW_PIN_ADSR_2_R  , 
-                 IDE_HW_PIN_ADSR_2_OUT
+   adsr_2.begin( IDE_HW_PIN_ADSR_2_A    ,
+                 IDE_HW_PIN_ADSR_2_D    ,
+                 IDE_HW_PIN_ADSR_2_S    ,
+                 IDE_HW_PIN_ADSR_2_R    ,  
+                 IDE_HW_PIN_ADSR_2_OUT  ,
+                 IDE_HW_PIN_ADSR_2_MODO
                 );
    
    Serial.begin(9600);
