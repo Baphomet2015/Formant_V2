@@ -52,8 +52,8 @@
 #define IDE_HW_PIN_ADSR_2_MODO   10   // Para seleccionar el modo AD/ADSR en el ASDSR 2
 
 
-#define IDE_GATE_ON               1    // SeÃ±al GATE activa, se esta pulsando una tecla
-#define IDE_GATE_OFF              0    // SeÃ±al GATE inactiva, NO se esta pulsando una tecla
+#define IDE_GATE_ON               1    // Senal GATE activa, se esta pulsando una tecla
+#define IDE_GATE_OFF              0    // Senal GATE inactiva, NO se esta pulsando una tecla
 
 
 
