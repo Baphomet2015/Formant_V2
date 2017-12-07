@@ -1,1 +1,5 @@
 https://www.hispasonic.com/tutoriales/construye-tu-propia-caja-ritmos-909/263
+
+https://www.pjrc.com/tech/midi-drums/sch-cpu.html
+https://www.cgs.synth.net/modules/cgs18v1.0_drum.html
+http://m.bareille.free.fr/ds7clone/ds7.htm
