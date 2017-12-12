@@ -457,7 +457,7 @@ void activarTeclaPulsada(void)
 void set_CodigoTecla(byte tecla)
 {
   digitalWrite(IDE_HW_PIN_LATCH,LOW);
-  shiftOut(IDE_HW_PIN_DATA, IDE_HW_PIN_CLOCK, MSBFIRST, (tecla*4));
+  shiftOut(IDE_HW_PIN_DATA, IDE_HW_PIN_CLOCK, MSBFIRST, tecla*4);
   digitalWrite(IDE_HW_PIN_LATCH,HIGH);
 }
   
