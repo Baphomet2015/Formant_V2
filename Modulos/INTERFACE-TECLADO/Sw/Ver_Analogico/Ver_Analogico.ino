@@ -3,7 +3,11 @@
 //
 // Proyecto:       Formant_V2
 // Version:        1.0
-// Fichero:        Formant_V2_Teclado.ino
+// Fichero:        Ver_Analogico.ino
+//
+//                 Version para Hardware de interfaz analogico
+//                 de teclado ( array de resistencias original
+//                 del formant)
 // Autor:   
 // Hardware:       Arduino Nano V3.0
 // Fecha:          Junio 2017
@@ -457,7 +461,7 @@ void activarTeclaPulsada(void)
 void set_CodigoTecla(byte tecla)
 {
   digitalWrite(IDE_HW_PIN_LATCH,LOW);
-  shiftOut(IDE_HW_PIN_DATA, IDE_HW_PIN_CLOCK, MSBFIRST, tecla*4);
+  shiftOut(IDE_HW_PIN_DATA, IDE_HW_PIN_CLOCK, MSBFIRST, tecla);
   digitalWrite(IDE_HW_PIN_LATCH,HIGH);
 }
   
