@@ -687,8 +687,6 @@ Wire Wire Line
 	7200 2250 7200 2350
 Wire Wire Line
 	7575 2300 7725 2300
-Wire Wire Line
-	7875 2650 7600 2650
 $Comp
 L R R?
 U 1 1 5A0A14BD
@@ -722,7 +720,6 @@ Wire Wire Line
 	8175 2400 8225 2400
 Wire Wire Line
 	8225 2650 8175 2650
-Connection ~ 7725 2650
 Wire Wire Line
 	6625 2400 6625 2750
 Wire Wire Line
@@ -1364,7 +1361,7 @@ Wire Wire Line
 	8175 5725 8125 5725
 Connection ~ 7675 5725
 Wire Wire Line
-	6575 6700 6575 5475
+	6575 5475 6575 6700
 Wire Wire Line
 	6050 6125 6050 6225
 Wire Wire Line
@@ -1499,7 +1496,7 @@ Wire Wire Line
 Wire Wire Line
 	2975 6600 5725 6600
 Wire Wire Line
-	2875 6700 6575 6700
+	6575 6700 2875 6700
 Wire Wire Line
 	6725 2750 6725 6875
 Wire Wire Line
@@ -1592,4 +1589,9 @@ Wire Wire Line
 Connection ~ 6725 2750
 Wire Wire Line
 	7675 5375 7675 5725
+Wire Wire Line
+	7725 2300 7725 2650
+Wire Wire Line
+	7875 2650 7600 2650
+Connection ~ 7725 2650
 $EndSCHEMATC
