@@ -1,0 +1,9 @@
+
+Identificacion del tipo de potenciometros
+Junto al valor puede aparecer algo como esto:
+
+
+- Lin Son LINEALES
+- Log Son Logaritmicos
+- A   Significa Audio (logaritmicos) 
+- B   Son lineales
