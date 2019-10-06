@@ -26,7 +26,7 @@
 // que se envian por el pueerto serie
 // ---------------------------------------------------------
 
-//#define DEBUG_MIDI  1
+#define DEBUG_MIDI  1
 
 
 // ---------------------------------------------------------
@@ -37,7 +37,8 @@
 
 #define IDE_HW_PIN_CLOCK          5   // Pin para generar el codigo de control del teclado ( CLOCK )
 #define IDE_HW_PIN_DATA           4   // Pin para generar el codigo de control del teclado ( DATA  )
-#define IDE_HW_PIN_LATCH          6   // Pin para generar el codigo de control del teclado ( LATCH )
+#define IDE_HW_PIN_LATCH_L        6   // Pin para generar el codigo de control del teclado ( LATCH ), parte L
+#define IDE_HW_PIN_LATCH_H       12   // Pin para generar el codigo de control del teclado ( LATCH ), parte H
 
 #define IDE_HW_PIN_GATE           2   // Pin para generar la señal GATE
 
@@ -65,20 +66,18 @@
 
 #define IDE_PAUSA_TEST           500  // Pausa en modo TEST, 500 milisegundos para generar las señales de 
                                       // GATE y LED de tecla pulsada
-
+#define IDE_PAUSA_GATE          1000  // Pausa utilizada en la generacion de la señal GATE (1ms), ver funciones tecla_ON y tecla_OFF
+                                      
 #define IDE_MIN_TECLA_ID         0    // Codigo MIDI de la tecla mas baja que se reconoce
-#define IDE_MAX_TECLA_ID         49   // Codigo MIDI de la tecla mas alta que se reconoce
+#define IDE_MAX_TECLA_ID         48   // Codigo MIDI de la tecla mas alta que se reconoce
                                       // IMPORTANTE:
                                       // El codigo MIDI de la tecla MAS ALTA que se puede manejar se utiliza tambien
                                       // para dimensionar la tabla de estado de las teclas (variable global tab_TeclasEstado)
+                                      // NO CAMBIAR este valor !!! corresponde a 4 octavas, que es el rango mas alto que
+                                      // se puede obtener utilizando un conversor D/A de 12 Bits como el utilizado
                                       
 #define IDE_TECLA_ESTADO_ON      1    // Indica que la tecla correspondiente esta pulsada (ON)
 #define IDE_TECLA_ESTADO_OFF     0    // Indica que la tecla correspondiente esta sin pulsar (OFF)
-
-
-
-#define IDE_DAC_MULTIPLICADOR    4    // Numero de pasos del DAC para obtener 83mv/tecla 
-
 
 
 

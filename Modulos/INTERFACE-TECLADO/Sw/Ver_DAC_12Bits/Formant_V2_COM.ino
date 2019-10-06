@@ -49,7 +49,6 @@ void getPotenciomentroManual_COM(void)
        volumenManualGeneral = volumen;
        setPotenciomentro_COM(volumen);
      }
-
 }
 
 

@@ -78,6 +78,10 @@ void ARDUINO_ADSR::inicializar(void)
   vSustain    = 0;
   flg_Sustain = false;
   flg_Inicio  = false;
+
+  #ifdef DEBUG_ADSR
+  Serial.println("ADSR Inicializado...");
+  #endif
 }
 
 
@@ -100,9 +104,18 @@ void ARDUINO_ADSR::generar(byte estado_GATE)
        modo = m;
        inicializar();
        flg_Estado = IDE_ADSR_OK;
+       
+       #ifdef DEBUG_ADSR
+       if ( modo==HIGH ) { Serial.println("MODO AD");   }
+       else              { Serial.println("MODO ADSR"); }
+       #endif
      }
   
-  if ( (flg_Inicio==false) && (flg_GATE==IDE_GATE_ON) )    
+  //if ( modo==IDE_MODO_ADSR ) { flg_GATE = estado_GATE; }
+  //else                       { flg_GATE = IDE_GATE_ON; }  
+       
+//if ( (flg_Inicio==false) && (flg_GATE==IDE_GATE_ON) )           
+  if ( (flg_Inicio==false)  )    
      { // ----------------------------------------------
        // Se dispara el ADSR
        // ----------------------------------------------
@@ -134,6 +147,17 @@ void ARDUINO_ADSR::generar(byte estado_GATE)
 
 void ARDUINO_ADSR::gen_Envolvente(void)
 {
+
+  #ifdef DEBUG_ADSR
+  switch ( flg_Estado )
+         {
+           case ( IDE_ADSR_OK ): { Serial.println("OK");      break; }
+           case ( IDE_ADSR_A ):  { Serial.println("ATTACK");  break; }
+           case ( IDE_ADSR_D ):  { Serial.println("DECAY");   break; }
+           case ( IDE_ADSR_S ):  { Serial.println("SUSTAIN"); break; }
+           case ( IDE_ADSR_R ):  { Serial.println("RELEASE"); break; }
+        }
+  #endif
   
   switch ( flg_Estado )
          {
@@ -194,7 +218,11 @@ void ARDUINO_ADSR::gen_Envolvente(void)
 
 byte ARDUINO_ADSR::get_Modo(void)
 {
-  return( digitalRead(adsr_modo) );
+  byte mAux;
+  
+  mAux = digitalRead(adsr_modo);
+      
+  return(mAux);
 }
 
 

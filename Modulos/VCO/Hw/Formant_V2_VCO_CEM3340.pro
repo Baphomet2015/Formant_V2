@@ -1,6 +1,10 @@
-update=07/09/2017 15:32:51
+update=05/03/2019 11:43:45
 version=1
 last_client=kicad
+[general]
+version=1
+RootSch=
+BoardNm=
 [pcbnew]
 version=1
 LastNetListRead=
@@ -56,5 +60,15 @@ LibName26=opto
 LibName27=atmel
 LibName28=contrib
 LibName29=valves
-[general]
+LibName30=D:/Cortana/Google Drive/Electronica/KiCad/Kicad_Libreria/Baphomet_Libreria
+LibName31=C:/Program Files/KiCad/share/kicad/library/switches
+[schematic_editor]
 version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60

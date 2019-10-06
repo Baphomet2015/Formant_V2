@@ -57,6 +57,35 @@ byte         tab_TeclasEstado[IDE_MAX_TECLA_ID+1]; // Tabla con el estado de cad
                                                    // IDE_MAX_TECLA_ID incluido
                                                    // ------------------------------------------------------------
 
+                                                   // ------------------------------------------------------------
+                                                   // Tabla con los valores que hay que enviar al DAC para generar 
+                                                   // las tensiones asignadas a cada tecla.
+                                                   // Al igual que en el array "tab_TeclasEstado" el valor de cada
+                                                   // posicion almacena el valor a enviar al DAC para generar la
+                                                   // tension en mV correspondiente a la tecla pulsada, por ejemplo
+                                                   // la tension de la  tecla MIDI con el codigo 27 se almacena en
+                                                   // vOctava[27] etc
+                                                   //                          MUY IMPORTANTE:
+                                                   // Los valores de este array han sido obtenidos pulsando TECLA
+                                                   // a TECLA y midiendo la tension KOV generadad, para determinar
+                                                   // la tension en pasos de 83mV ( 1V/Octava)
+                                                   // El DAC genera 1mV por paso pero debido a el propio error que
+                                                   // introduce hay que "corregir" el valor teorico, por ejemplo
+                                                   // Para la tecla 0, el valor teorico serian 83mV pero al medir
+                                                   // con un multimetro la salida del DAC cuando se le envia el codigo
+                                                   // 83 se observa que en realidad genera 84mV por lo que para
+                                                   // obtener los 83mV deseados se enviara al DAC el valor 82 y 
+                                                   // asi con todas las teclas.
+                                                   //
+                                                   // ------------------------------------------------------------
+                                           
+unsigned int vOctava[IDE_MAX_TECLA_ID+1] = {   82,  165,  248,  331,  414,  497,  579,  662,  745,  828,  911,  994,
+                                             1076, 1159, 1242, 1325, 1408, 1494, 1573, 1656, 1739, 1822, 1905, 1988,
+                                             2071, 2154, 2236, 2319, 2402, 2485, 2568, 2651, 2733, 2816, 2899, 2982,
+                                             3065, 3148, 3231, 3313, 3396, 3479, 3562, 3645, 3727, 3810, 3893, 3976,
+                                             4059
+                                           };                                           
+
 byte volumenManualGeneral;                         // valor del potenciometro que fija el volumen general del Formant, en modo manual
 
 
@@ -70,9 +99,11 @@ byte volumenManualGeneral;                         // valor del potenciometro qu
 
 void setup()
 {
-   pinMode(IDE_HW_PIN_CLOCK,OUTPUT);
-   pinMode(IDE_HW_PIN_DATA ,OUTPUT);
-   pinMode(IDE_HW_PIN_LATCH,OUTPUT);
+   pinMode(IDE_HW_PIN_CLOCK   ,OUTPUT);
+   pinMode(IDE_HW_PIN_DATA    ,OUTPUT);
+   pinMode(IDE_HW_PIN_LATCH_L ,OUTPUT);
+   pinMode(IDE_HW_PIN_LATCH_H ,OUTPUT);
+
    
    pinMode(IDE_HW_PIN_LED_TECLA_ON,OUTPUT);
    
@@ -91,12 +122,13 @@ void setup()
 
    volumenManualGeneral = 0;
      
-   set_CodigoTecla(0);
-   set_GATE(LOW);
-   set_LedTeclaOn(LOW);
-   get_CanalID();
+  set_GATE(LOW);
+  set_LedTeclaOn(LOW);
+  set_CodigoTecla(-1);
+  
+  get_CanalID();
 
-   c_MIDI.begin(canalID);      // IMPORTANTE: Imprescindible llamar antes de usar la clase MIDI
+  c_MIDI.begin(canalID);       // IMPORTANTE: Imprescindible llamar antes de usar la clase MIDI
                                //             . Programa el puerto serie con la velocidad MIDI
                                //             . Inicilaliza la clase
                                //             . La  clase  DEBE  recibir  el  canalID  asignado al 
@@ -139,7 +171,7 @@ void loop()
   // .
   // 
   // ------------------------------------------------------------
-  getPotenciomentroManual_COM();
+   getPotenciomentroManual_COM();
     
     
     
@@ -201,8 +233,8 @@ void loop()
                                   { // -----------------------------------------------
                                     // Volumen general del Formant  (Modulo COM)
                                     // -----------------------------------------------
-                                     msg_MIDI_Ctrl_Volumen();
-                                     break;
+                                    msg_MIDI_Ctrl_Volumen();
+                                    break;
                                   }
                             }
                       break; 
@@ -229,11 +261,11 @@ void msg_MIDI_Tecla_ON(void)
                       
   teclaID = c_MIDI.get_Data_01(); // Recupera el codigo de la tecla pulsada
   
-  #ifdef DEBUG_MIDI 
-  Serial.println();
-  Serial.print  ("Tecla: ");
-  Serial.println(teclaID,DEC);
-  #endif
+  //#ifdef DEBUG_MIDI 
+  //Serial.println();
+  //Serial.print  ("Tecla MIDI: ");
+  //Serial.println(teclaID,DEC);
+  //#endif
   
   if ( (teclaID>=IDE_MIN_TECLA_ID) && (teclaID<=IDE_MAX_TECLA_ID) )
      { // -------------------------------------------------
@@ -291,11 +323,11 @@ void msg_MIDI_Tecla_OFF(void)
                
   teclaID = c_MIDI.get_Data_01(); // Recupera el codigo de la tecla pulsada
 
-  #ifdef DEBUG_MIDI 
-  Serial.println();
-  Serial.print  ("Tecla: ");
-  Serial.println(teclaID,DEC);
-  #endif
+  //#ifdef DEBUG_MIDI 
+  //Serial.println();
+  //Serial.print  ("Tecla: ");
+  //Serial.println(teclaID,DEC);
+  //#endif
                            
   if ( (teclaID>=IDE_MIN_TECLA_ID) && (teclaID<=IDE_MAX_TECLA_ID) )
      { // -------------------------------------------------
@@ -352,7 +384,15 @@ void msg_MIDI_Ctrl_TeclasOFF(void)
 
 void msg_MIDI_Ctrl_Volumen(void)
 {
-  setPotenciomentro_COM(c_MIDI.get_Data_02());
+  byte volumen;
+  
+  volumen = c_MIDI.get_Data_02();
+  setPotenciomentro_COM(volumen);
+  
+  // #ifdef DEBUG_MIDI 
+  // Serial.println("Volumen MIDI: " );
+  // Serial.print  (volumen,DEC);
+  // #endif
 }
 
 
@@ -360,31 +400,47 @@ void msg_MIDI_Ctrl_Volumen(void)
 // ------------------------------------------------------------
 //
 // void tecla_OFF(void)
-//
+// Efectua la opracion de "dejar" de pulsar tecla
+// Con el fin de que el funcionamiento sea IGUAL al que proporcionaba
+// el interface original del Formant, el orden de las instrucciones
+// de esta funcion son:
+// 1º Finaliza la generacion del pulso GATE que dispara los ADSR etc y apagado
+//    del led GATE
+
 //
 // ------------------------------------------------------------
 
 void tecla_OFF(void)
 {
-  set_CodigoTecla(0);
   set_GATE(LOW);
   set_LedTeclaOn(LOW);
+  //delayMicroseconds(IDE_PAUSA_GATE);
+  //set_CodigoTecla(-1);
 }
-
 
 
 // ------------------------------------------------------------
 //
 // void tecla_ON(teclaID)
-//
-//
+// Genera la tension correspondiente a la tecla pulsada
+// Con el fin de que el funcionamiento sea IGUAL al que proporcionaba
+// el interface original del Formant, el orden de las instrucciones
+// de esta funcion son:
+// 1º Generar la tension correspondiente a la tecla pulsada
+// 2º Espera de 1ms para que la tension se estabilice en la entrada
+//    del circuito de portamento y control
+//    Esta pausa sustituye al circuito original de la parte de teclado
+//    formado por el operacional IC5 (ver esquema original)
+// 3º Generacion del pulso GATE que dispara los ADSR etc y encendido
+//    del led GATE
 // ------------------------------------------------------------
 
 void tecla_ON(byte teclaID)
 {
-  set_CodigoTecla(teclaID);
-  set_GATE(HIGH);
-  set_LedTeclaOn(HIGH);
+  set_CodigoTecla(teclaID);           // 1º Generar la tension correspondiente a la tecla pulsada
+  delayMicroseconds(IDE_PAUSA_GATE);  // 2º Espera de 1 ms
+  set_GATE(HIGH);                     // 3º Generacion del pulso GATE 
+  set_LedTeclaOn(HIGH);               // 4º Encendido del led MIDI
 }
 
 
@@ -402,17 +458,13 @@ void tecla_ON(byte teclaID)
 
 void activarTeclaPulsada(void)
 {
-  int idx;  
+  int  idx;  
   byte teclaID;
   byte teclaPulsada;
   
   
   teclaID      = 0;
   teclaPulsada = false;
-  
-  #ifdef DEBUG_MIDI 
-  Serial.println();
-  #endif 
   
   for ( idx=IDE_MAX_TECLA_ID;idx>=0;idx-- )
       { // -------------------------------------------------
@@ -437,14 +489,8 @@ void activarTeclaPulsada(void)
      }
   else
      { // Deja pulsada la tecla mas baja
-       tecla_ON(teclaID+1);   
+       tecla_ON(teclaID);   
      }
-
-  #ifdef DEBUG_MIDI 
-  Serial.println();
-  Serial.print  ("Tecla pulsada: ");
-  Serial.println(teclaID,DEC);
-  #endif
  
 }
 
@@ -453,18 +499,53 @@ void activarTeclaPulsada(void)
 
 // ------------------------------------------------------------
 //
-// void set_CodigoTecla(byte tecla)
+// void set_CodigoTecla(int tecla)
+//
+// - Obtiene del array de tensiones "vOctava" la tension equivalente
+//   a la tecla pulsada y carga ese valor en los HC595
+// - Si el ID de la tecla pulsada que recibe es -1 se entiende
+//   que NO hay nioguna tecla pulsada y carga en los HC595 0
 //
 // ------------------------------------------------------------
 
-void set_CodigoTecla(byte tecla)
+void set_CodigoTecla(int tecla)
 {
-  byte cod_DAC;
+  unsigned int cod_DAC;
+  byte         data;
   
-  cod_DAC = tecla * IDE_DAC_MULTIPLICADOR;
-  digitalWrite(IDE_HW_PIN_LATCH,LOW);
-  shiftOut(IDE_HW_PIN_DATA, IDE_HW_PIN_CLOCK, MSBFIRST,cod_DAC);
-  digitalWrite(IDE_HW_PIN_LATCH,HIGH);
+  
+  if ( tecla==-1 ) { cod_DAC = 0 ;             }
+  else             { cod_DAC = vOctava[tecla]; }
+ 
+  #ifdef DEBUG_MIDI 
+  Serial.println ();
+  Serial.print   ("Tecla pulsada: ");
+  if ( cod_DAC==0 ) { Serial.println ("NINGUNA"); }
+  else              { Serial.println (tecla,DEC); }
+  Serial.print   ("Valor Enviado al DAC: ");
+  Serial.println (cod_DAC,DEC);
+  #endif
+ 
+
+  // ------------------------------------------------------------
+  // Cargar la parte baja del valor
+  // ------------------------------------------------------------
+  data =  cod_DAC & 0x00FF; 
+  Serial.println (data);
+  digitalWrite(IDE_HW_PIN_LATCH_L,LOW);
+  shiftOut(IDE_HW_PIN_DATA, IDE_HW_PIN_CLOCK, MSBFIRST,data);
+  digitalWrite(IDE_HW_PIN_LATCH_L,HIGH);
+
+  // ------------------------------------------------------------
+  // Cargar la parte alta del valor
+  // ------------------------------------------------------------
+  data = (cod_DAC & 0xFF00)>>8; 
+  Serial.println (data);
+  digitalWrite(IDE_HW_PIN_LATCH_H,LOW);
+  shiftOut(IDE_HW_PIN_DATA, IDE_HW_PIN_CLOCK, MSBFIRST,data);
+  digitalWrite(IDE_HW_PIN_LATCH_H,HIGH);
+  
+  
 }
   
   

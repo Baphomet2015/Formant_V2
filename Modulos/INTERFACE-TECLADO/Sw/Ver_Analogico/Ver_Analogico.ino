@@ -92,7 +92,7 @@ void setup()
 
    volumenManualGeneral = 0;
      
-   set_CodigoTecla(0);
+   set_CodigoTecla(1);
    set_GATE(LOW);
    set_LedTeclaOn(LOW);
    get_CanalID();
@@ -367,7 +367,7 @@ void msg_MIDI_Ctrl_Volumen(void)
 
 void tecla_OFF(void)
 {
-  set_CodigoTecla(0);
+  // set_CodigoTecla(0);
   set_GATE(LOW);
   set_LedTeclaOn(LOW);
 }
