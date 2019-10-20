@@ -57,6 +57,11 @@ void ARDUINO_ADSR::begin(byte p_adsr_A,byte p_adsr_D,byte p_adsr_S,byte p_adsr_R
   modo       = get_Modo();
   inicializar();
   flg_Estado = IDE_ADSR_OK;
+    
+  #ifdef DEBUG_ADSR  
+  if ( modo==HIGH ) { Serial.println("MODO AD");   }
+  else              { Serial.println("MODO ADSR"); }
+  #endif
   
 }
 
@@ -111,13 +116,9 @@ void ARDUINO_ADSR::generar(byte estado_GATE)
        #endif
      }
   
-  //if ( modo==IDE_MODO_ADSR ) { flg_GATE = estado_GATE; }
-  //else                       { flg_GATE = IDE_GATE_ON; }  
-       
-//if ( (flg_Inicio==false) && (flg_GATE==IDE_GATE_ON) )           
   if ( (flg_Inicio==false)  )    
      { // ----------------------------------------------
-       // Se dispara el ADSR
+       // Se dispara la generacion de envolvente
        // ----------------------------------------------
        flg_Inicio = true;
      }
@@ -126,11 +127,9 @@ void ARDUINO_ADSR::generar(byte estado_GATE)
      { // ----------------------------------------------
        // Generar envolvente
        // ----------------------------------------------
-       vOut       = analogRead(adsr_OUT);
-       vSustain   = analogRead(adsr_S);
- 
-       if ( modo==IDE_MODO_ADSR ) { flg_GATE = estado_GATE; }
-       else                       { flg_GATE = IDE_GATE_ON; }  
+       vOut     = analogRead(adsr_OUT);
+       vSustain = analogRead(adsr_S);
+       flg_GATE = estado_GATE;
        
        gen_Envolvente(); 
      }
@@ -151,11 +150,11 @@ void ARDUINO_ADSR::gen_Envolvente(void)
   #ifdef DEBUG_ADSR
   switch ( flg_Estado )
          {
-           case ( IDE_ADSR_OK ): { Serial.println("OK");      break; }
-           case ( IDE_ADSR_A ):  { Serial.println("ATTACK");  break; }
-           case ( IDE_ADSR_D ):  { Serial.println("DECAY");   break; }
-           case ( IDE_ADSR_S ):  { Serial.println("SUSTAIN"); break; }
-           case ( IDE_ADSR_R ):  { Serial.println("RELEASE"); break; }
+        // case ( IDE_ADSR_OK ): { Serial.println("OK");      break; }
+           case ( IDE_ADSR_A  ): { Serial.println("ATTACK");  break; }
+           case ( IDE_ADSR_D  ): { Serial.println("DECAY");   break; }
+           case ( IDE_ADSR_S  ): { Serial.println("SUSTAIN"); break; }
+           case ( IDE_ADSR_R  ): { Serial.println("RELEASE"); break; }
         }
   #endif
   
@@ -240,10 +239,10 @@ void ARDUINO_ADSR::genera_ATTACK(void)
   
   flg_Fin_ATTACK = true;
 
-  if ( flg_GATE==IDE_GATE_ON )
+  if ( (flg_GATE==IDE_GATE_ON) || (modo==HIGH) )
      { // ---------------------------------------------
-       // Se mantiene la tecla pulsada durante el 
-       // periodo de ATTACK
+       // Se mantiene  la   tecla  pulsada  durante  el 
+       // periodo de ATTACK, o bien esta en modo AD
        // ---------------------------------------------
       
        if ( vOut>=vSustain )
@@ -293,25 +292,43 @@ void ARDUINO_ADSR::genera_ATTACK(void)
 void ARDUINO_ADSR::genera_DECAY(void)
 {
 
-  if ( flg_GATE==IDE_GATE_ON )
+  if ( (flg_GATE==IDE_GATE_ON) || (modo==HIGH) )
      { // ---------------------------------------------
        // Se mantiene la tecla pulsada durante el 
        // periodo de DECAY
        // ---------------------------------------------
-       if ( (flg_Sustain==true) && (vOut<=vSustain) )
-          { // ------------------------------------------------------------
-            // Alcanzado el nivel de SUSTAIN
-            // Finaliza el DECAY y activa el SUSTAIN
-            // ------------------------------------------------------------
-            digitalWrite(adsr_D,LOW);
-            flg_Estado = IDE_ADSR_S;
+       
+       if ( modo==LOW ) 
+          { // ---------------------------------------------
+            // Control de finalizacion de DECAY en modo ADSR
+            // ---------------------------------------------
+            if ( (flg_Sustain==true) && (vOut<=vSustain) )
+               { // ------------------------------------------------------------
+                 // Alcanzado el nivel de SUSTAIN
+                 // Finaliza el DECAY y activa el SUSTAIN
+                 // ------------------------------------------------------------
+                 digitalWrite(adsr_D,LOW);
+                 flg_Estado = IDE_ADSR_S;
+               }
+         }
+      else
+          { // ---------------------------------------------
+            // Control de finalizacion de DECAY en modo AD
+            // ---------------------------------------------
+           if ( vOut<=IDE_AD_FIN_DECAY )
+              {
+                digitalWrite(adsr_D,LOW);
+                flg_Estado = IDE_ADSR_OK;
+              }
+         
          }
     }
   else
      { // ---------------------------------------------
        // Deja de pulsar tecla  durante el  periodo  de
-       // DECAY, reinicia el  ADSR dejando el estado en
-       // IDE_ADSR_OK, listo para el proximo disparo
+       // DECAY, en modo ADSR, reinicia el ADSR dejando
+       // el  estado  en  IDE_ADSR_OK,  listo  para  el
+       // proximo disparo
        // ---------------------------------------------
        flg_Estado = IDE_ADSR_OK;
      }

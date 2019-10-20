@@ -8,7 +8,7 @@
 // Hardware:       Arduino Nano V3.0
 // Fecha:          Noviembre 2017
 //
-// Funcionalidad:  Fichero principal ( main ) de la aplicaciÃ³n
+// Funcionalidad:  Fichero principal ( main ) de la aplicacion
 //                 de control del generador de ADSR.
 //
 // Notas:          REVISADO --        

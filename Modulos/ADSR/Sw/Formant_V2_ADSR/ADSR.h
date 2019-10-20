@@ -8,7 +8,7 @@
 // Hardware:       Arduino Nano V3.0
 // Fecha:          Noviembre 2017
 //
-// Funcionalidad:  DEfinicion de la clase ADSR
+// Funcionalidad:  Definicion de la clase ADSR
 //
 // Notas:          REVISADO --        
 //
@@ -31,9 +31,10 @@
 #define IDE_ADSR_R                4    // Indica que se esta generando la parte RELEASE en la envolvente de salida
 
 #define IDE_ADSR_FIN_ATTACK     950    // Valor  para detectar el fin del ciclo de ATTACK en una envolvente
+#define IDE_AD_FIN_DECAY         50    // Valor  para detectar el fin del ciclo de DECAY  en el modo AD
 
 #define IDE_MODO_ADSR            LOW   // Seleccionado modo ADSR, coincide con el nivel leido en el pin de entrada correspondiente   
-#define IDE_MODO_AD              HIGH  // Seleccionado modo AD, coincide con el nivel leido en el pin de entrada correspondiente
+#define IDE_MODO_AD              HIGH  // Seleccionado modo AD,   coincide con el nivel leido en el pin de entrada correspondiente
 
 
 // ---------------------------------------------------------
