@@ -1,0 +1,294 @@
+
+// ---------------------------------------------------------
+//
+// Proyecto:       Formant_V2
+// Version:        1.0
+// Fichero:        DCO.ino
+// Autor:   
+// Hardware:       Arduino Nano V3.0
+// Fecha:          Diciembre 2019
+//
+// Funcionalidad:  
+//                 
+//
+// Notas:          
+//
+// ---------------------------------------------------------
+
+#include <Arduino.h>
+#include <stdlib.h>
+#include <SPI.h>
+#include <MD_AD9833.h>
+
+
+
+// ------------------------------------------------------------
+//
+//
+//
+//
+// ------------------------------------------------------------
+
+
+#define IDE_HW_PIN_LOAD_AUTO  3  // Pin para cargar datos en el buffer de memoria
+#define IDE_HW_PIN_LOAD_CLK   2  // Generacion de reloj en modo load
+#define IDE_HW_PIN_LOAD_RESET 4  // Reset contador de direcciones del buffer 6116 en modo load
+#define IDE_HW_PIN_LOAD_WR    5  // Escritura en memoria en modo load
+                                 // http://robots-argentina.com.ar/didactica/arduino-ampliar-cantidad-de-salidas-digitales-con-74hc595/ 
+#define IDE_HW_PIN_DS         6
+#define IDE_HW_PIN_STCP       8
+#define IDE_HW_PIN_SHCP       7
+
+#define IDE_HW_PIN_HC245      9  // Control del HC245
+
+#define IDE_HW_SPI_FSYNC      10	///< SPI Load pin number (FSYNC in AD9833 usage)
+#define IDE_HW_SPI_DATA       11	///< SPI Data pin number
+#define IDE_HW_SPI_CLK        13	///< SPI Clock pin number
+
+
+#define IDE_MODO_LOAD         0        // Modo Load ( Cargar datos en el buffer HW formado por los 6116
+#define IDE_MODO_AUTO         1        // Modo de generacion de onda definida
+
+#define IDE_DELAY_RESET_ADDR  1000     // Duracion ms del pulso para resetear el contador de direcciones 4040
+#define IDE_MAX_HW_BUFFER     2048     // Tamaño en Kbytes de la memoria utilizada para definir la onda ( Dos chips 6116 2Kx8 )
+#define IDE_MAX_HW_DAC        1024     // Valor maximo de una muestra enviada al DAC ( DAC 10 Bits, 0 ... 1023)
+
+uint32_t tablaNotas[108] = {      0L,     0L,     0L,    0L,      0L, 44698L,  47358L, 50174L, 53164L, 56318L, 59676L, 63219L,
+                              66967L, 70960L, 75179L,79643L,  84375L, 89392L,  94716L,100348L,106309L,112636L,119332L,126439L,
+                             133955L,141920L,150358L,159286L,168769L,178804L, 189432L,200696L,212636L,225272L,238664L,252866L,
+                             268000L,283835L,300715L,0,0,0,0,0,0,
+                          0,0,0,0,0,0,0,0,0,
+                          0,0,0,0,0,0,0,0,0,
+                          0,0,0,0,0,0,0,0,0,
+                          0,0,0,0,0,0,0,0,0,
+                        
+                         };
+uint32_t             frecuencia;
+
+// ------------------------------------------------------------
+//
+// ------------------------------------------------------------
+
+MD_AD9833 AD_9833(IDE_HW_SPI_FSYNC); 
+
+
+
+// ------------------------------------------------------------
+//
+// setup()
+//
+//
+// ------------------------------------------------------------
+
+void setup()
+{
+   pinMode(IDE_HW_PIN_LOAD_AUTO ,OUTPUT);
+   pinMode(IDE_HW_PIN_LOAD_CLK  ,OUTPUT);
+   pinMode(IDE_HW_PIN_LOAD_RESET,OUTPUT);
+   pinMode(IDE_HW_PIN_LOAD_WR   ,OUTPUT);
+
+   pinMode(IDE_HW_PIN_HC245     ,OUTPUT);
+
+   pinMode(IDE_HW_PIN_DS        ,OUTPUT);
+   pinMode(IDE_HW_PIN_STCP      ,OUTPUT);
+   pinMode(IDE_HW_PIN_SHCP      ,OUTPUT);
+
+   pinMode(IDE_HW_SPI_FSYNC     ,OUTPUT);
+   pinMode(IDE_HW_SPI_DATA      ,OUTPUT);
+   pinMode(IDE_HW_SPI_CLK       ,OUTPUT);
+
+   Serial.begin(9600);
+   iniAD9833();
+   iniCargarMemoria();   
+  
+}
+
+
+char buff[50];
+int d;
+int x = false;
+
+// ------------------------------------------------------------
+//
+// void loop()
+//
+// ------------------------------------------------------------
+
+
+  
+void loop()
+{
+  
+  if ( Serial.available() )
+     {
+       d = Serial.read();
+       
+       if ( d>=48 && d <=56 )
+          {
+            Serial.println("Cargando...");
+            iniCargarMemoria();
+       
+            switch(d)
+                  {
+                    case(48): { genOndaSenoSemiCicloPositivo();   break; }               
+                    case(49): { genOndaCosenoSemiCicloPositivo(); break; }
+                    case(50): { genOndaSinusoidal();              break; }               
+                    case(51): { genOndaTriangular();              break; }               
+                    case(52): { genOndaPulso();                   break; }                              
+                    case(53): { genOndaDienteSierra();            break; }                              
+                    case(54): { genOndaCuadrada();                break; }  
+                    case(55): { genOndaExponencial();             break; }                      
+                  }
+            setModoAutoLoad(IDE_MODO_AUTO);             
+            Serial.println("Cargado");   
+         }
+     }
+}
+
+
+// ------------------------------------------------------------
+//
+// void iniCargarMemoria()
+// 
+// 
+// ------------------------------------------------------------
+
+void iniCargarMemoria(void)
+{
+  digitalWrite(IDE_HW_PIN_LOAD_CLK,HIGH);
+  digitalWrite(IDE_HW_PIN_LOAD_WR ,HIGH);
+  setModoAutoLoad(IDE_MODO_LOAD);
+  resetContadorADDR();  
+  
+}
+
+
+
+// ------------------------------------------------------------
+//
+// setModoAutoLoad(byte modo)
+// modo: IDE_MODO_LOAD Cargar datos en el buffer 6116
+//       IDE_MODO_AUTO Generacion de onda 
+// ------------------------------------------------------------
+
+void setModoAutoLoad(byte modo)
+{
+  if ( modo==IDE_MODO_LOAD )
+     { digitalWrite(IDE_HW_PIN_LOAD_AUTO ,HIGH);
+       digitalWrite(IDE_HW_PIN_HC245     ,HIGH);
+     }
+  else
+     { digitalWrite(IDE_HW_PIN_LOAD_AUTO ,LOW);
+       digitalWrite(IDE_HW_PIN_HC245     ,LOW);
+     }
+}
+
+
+
+// ------------------------------------------------------------
+//
+// resetContadorADDR(void)  
+// Resetea el contador de direcciones (4040) que direcciona el
+// buffer de memoria formado por los 6116
+// PREVIAMENTE tiene que estar seleccionado el modo IDE_MODO_LOAD
+// sino no se resetea el 4040
+// ------------------------------------------------------------
+
+void resetContadorADDR(void)
+{
+  digitalWrite(IDE_HW_PIN_LOAD_RESET ,HIGH);
+  delayMicroseconds(IDE_DELAY_RESET_ADDR);
+  digitalWrite(IDE_HW_PIN_LOAD_RESET ,LOW);
+}
+
+
+
+// ------------------------------------------------------------
+//
+// clkContadorADDR(void)
+// Genera un pulso de reloj en el contador de direcciones 4040
+// para que avance uno la direccion
+// PREVIAMENTE tiene que estar seleccionado el modo IDE_MODO_LOAD
+// sino no se resetea el 4040
+// ------------------------------------------------------------
+
+void clkContadorADDR(void)
+{
+  digitalWrite(IDE_HW_PIN_LOAD_CLK,LOW);
+  digitalWrite(IDE_HW_PIN_LOAD_CLK,HIGH);
+}
+
+
+
+// ------------------------------------------------------------
+//
+// cargarDatoMemoria(void)
+// Genera el pulso de escritura en las memorias 6116 que almacena 
+// el valor que tenga en ese momento el registro formado por los
+// HC595.
+// Lo almacena el la direccion de memoria apuntada en las salidas
+// del 4040
+// ------------------------------------------------------------
+
+void cargarDatoMemoria(void)
+{
+  digitalWrite(IDE_HW_PIN_LOAD_WR ,LOW);
+  digitalWrite(IDE_HW_PIN_LOAD_WR ,HIGH);
+}
+
+
+
+// ------------------------------------------------------------
+//
+// void cargarDatoBuffer(unsigned int data)
+// Carga el valor que recibe en el registro formado por los dos
+// HC595
+// ------------------------------------------------------------
+
+void cargarDatoBuffer(unsigned int data)
+{
+  byte pH;
+  byte pL;
+  
+  pH = (data >> 8 & 0x00FF) | 0B00000100;
+  pL = data      & 0x00FF;
+  shiftOut(IDE_HW_PIN_DS, IDE_HW_PIN_SHCP, MSBFIRST,pH ); // Parte Alta
+  shiftOut(IDE_HW_PIN_DS, IDE_HW_PIN_SHCP, MSBFIRST,pL);  // Parte Baja
+  digitalWrite(IDE_HW_PIN_STCP,HIGH);                     // pulso de Latch
+  digitalWrite(IDE_HW_PIN_STCP,LOW);  
+  
+}
+
+
+
+// ------------------------------------------------------------
+//
+// void iniAD9833(void)
+// 
+// ------------------------------------------------------------
+
+void iniAD9833(void)
+{
+  
+  MD_AD9833::channel_t chan;
+  MD_AD9833::mode_t    mode;
+
+  chan = MD_AD9833::CHAN_0; 
+  mode = MD_AD9833::MODE_SQUARE1;
+  frecuencia = 2048000L;  // 2.048Mz = 1Khz de onda generada
+  frecuencia = 189432L;  // Demo
+  AD_9833.begin();
+  
+  AD_9833.setMode(mode);
+  AD_9833.setFrequency(chan, frecuencia);
+  AD_9833.setActiveFrequency(chan);
+
+  
+}
+
+
+
+
+
+
+
